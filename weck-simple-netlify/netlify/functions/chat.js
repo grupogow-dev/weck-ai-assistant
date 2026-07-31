@@ -180,7 +180,10 @@ aktuell sind, im Gegensatz zum statischen Team-Verzeichnis oben. Ein
 LIVE_DATEN_HEUTE-Abschnitt (falls vorhanden) zeigt den heutigen Status ALLER
 Mitarbeiter (im Dienst / heute gearbeitet / noch nicht eingestempelt) — nutze
 ihn für allgemeine Fragen wie "wer arbeitet heute" oder "welche Mitarbeiter
-sind da".
+sind da". Ein LIVE_DATEN_CRM-Abschnitt (falls vorhanden) zeigt die letzten
+Kontakte (Besuche/Anrufe/WhatsApp/E-Mail) und Kundenwünsche zu einer
+genannten Praxis, live aus dem CRM — nutze ihn für Fragen wie "wann war der
+letzte Kontakt mit X" oder "was wollte Kunde Y zuletzt".
 
 FAHRPLAN 2027 (Fahrer / Botendienst-Schichtplan): Es gibt 9 Fahrer, alle auf
 Minijob-Basis (Grenze 43 Std./Monat), mit 8 Urlaubstagen/Jahr Anspruch
@@ -258,6 +261,122 @@ function firestoreFieldsToJs(fields) {
   const out = {};
   for (const k in fields) out[k] = firestoreValueToJs(fields[k]);
   return out;
+}
+
+// ---------------------------------------------------------------------
+// LIVE-DATEN AUS DEM CRM (crm-weck-dental) — Kontakthistorie und
+// Kundenwünsche pro Kunde. Anderes Firebase-Projekt als Zeiterfassung/
+// Fahrplan, daher eigene Anmeldung und eigene Collection ("app_data" statt
+// "kv", Schlüssel wie im CRM selbst: weck_clients_v1, weck_visits_v1, ...).
+// ---------------------------------------------------------------------
+const CRM_FIREBASE = {
+  apiKey: 'AIzaSyCBNSKE3E74YClG-20I_7MG9Vh4JMiYsjs',
+  projectId: 'crm-weck-dental',
+};
+
+let cachedCrmIdToken = null;
+let cachedCrmIdTokenExpiry = 0;
+
+async function getCrmIdToken() {
+  if (cachedCrmIdToken && Date.now() < cachedCrmIdTokenExpiry) return cachedCrmIdToken;
+  const res = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${CRM_FIREBASE.apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ returnSecureToken: true }),
+    }
+  );
+  const data = await res.json();
+  if (!data.idToken) throw new Error('Anonyme CRM-Anmeldung fehlgeschlagen');
+  cachedCrmIdToken = data.idToken;
+  cachedCrmIdTokenExpiry = Date.now() + 50 * 60 * 1000;
+  return cachedCrmIdToken;
+}
+
+async function fetchCrmDoc(key) {
+  const token = await getCrmIdToken();
+  const url = `https://firestore.googleapis.com/v1/projects/${CRM_FIREBASE.projectId}/databases/(default)/documents/app_data/${encodeURIComponent(key)}`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data.fields) return null;
+  const obj = firestoreFieldsToJs(data.fields);
+  try {
+    return JSON.parse(obj.value);
+  } catch {
+    return obj.value;
+  }
+}
+
+// Findet in der Frage genannte Kundennamen (Praxen) und holt Kontakthistorie
+// + Kundenwünsche live aus dem CRM — im selben Format, das das CRM intern
+// für seine eigene KI-Zusammenfassung nutzt (generateAiSummary).
+async function getClientCrmInfoForMessage(message) {
+  let clients;
+  try {
+    clients = await fetchCrmDoc('weck_clients_v1');
+  } catch (e) {
+    return { error: 'Verbindung zum CRM fehlgeschlagen: ' + e.message };
+  }
+  if (!clients || !clients.length) return null;
+
+  const lowerMsg = message.toLowerCase();
+  const matched = clients.filter((c) => {
+    if (!c.name) return false;
+    const nameLower = c.name.toLowerCase();
+    if (lowerMsg.includes(nameLower)) return true;
+    // Auch auf einzelne markante Wörter im Kundennamen prüfen (z. B. "Baron",
+    // "Amberger"), da Praxen oft mit "Dr. Vorname Nachname" heißen.
+    return nameLower
+      .split(/[\s,&/]+/)
+      .filter((w) => w.length >= 4 && !['praxis', 'zahnarzt', 'zahnarztpraxis', 'dr.', 'gemeinschaftspraxis'].includes(w))
+      .some((w) => lowerMsg.includes(w));
+  });
+  if (!matched.length) return null;
+
+  let visitsAll = [];
+  let ordersAll = [];
+  try {
+    [visitsAll, ordersAll] = await Promise.all([
+      fetchCrmDoc('weck_visits_v1'),
+      fetchCrmDoc('weck_orders_v1'),
+    ]);
+  } catch (e) {
+    /* weiter ohne Verlauf, falls das fehlschlägt */
+  }
+  visitsAll = visitsAll || [];
+  ordersAll = ordersAll || [];
+
+  const results = matched.slice(0, 2).map((c) => {
+    const visits = visitsAll
+      .filter((v) => v.clientId === c.id)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 6);
+    const orders = ordersAll
+      .filter((o) => o.clientId === c.id)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 6);
+    return {
+      name: c.name,
+      notizen: c.notes || '',
+      letzteKontakte: visits.map((v) => ({
+        datum: v.date,
+        kanal: v.channel,
+        grund: v.reason,
+        themen: v.topics,
+        ergebnis: v.outcome,
+      })),
+      letzteKundenwuensche: orders.map((o) => ({
+        datum: o.date,
+        produkte: o.products,
+        betrag: o.amount,
+        zufriedenheit: o.satisfaction,
+      })),
+    };
+  });
+
+  return { results };
 }
 
 // Liest ein einzelnes kv-Dokument (die App speichert alles als {key, value: JSON-String})
@@ -653,6 +772,20 @@ exports.handler = async (event) => {
     }
   } catch (e) {
     liveDataBlock += `\n\nLIVE_DATEN_FAHRPLAN: Live-Abfrage des Fahrplans ist fehlgeschlagen (${e.message}).`;
+  }
+
+  // Kontakthistorie/Kundenwünsche (CRM: crm-weck-dental) — drittes,
+  // eigenständiges Firebase-Projekt.
+  try {
+    const crmInfo = await getClientCrmInfoForMessage(userMessage);
+    if (crmInfo && crmInfo.error) {
+      liveDataBlock += `\n\nLIVE_DATEN_CRM: Live-Abfrage des CRM ist fehlgeschlagen (${crmInfo.error}).`;
+    } else if (crmInfo && crmInfo.results && crmInfo.results.length) {
+      liveDataBlock += '\n\nLIVE_DATEN_CRM (Kontakthistorie und Kundenwünsche, gerade eben aus dem CRM abgerufen):\n' +
+        crmInfo.results.map((r) => JSON.stringify(r)).join('\n');
+    }
+  } catch (e) {
+    liveDataBlock += `\n\nLIVE_DATEN_CRM: Live-Abfrage des CRM ist fehlgeschlagen (${e.message}).`;
   }
 
   // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
