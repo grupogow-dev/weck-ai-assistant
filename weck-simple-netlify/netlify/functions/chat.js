@@ -657,6 +657,7 @@ exports.handler = async (event) => {
 
   // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
   // damit der Rest des Codes (messages/roles-Format) unverändert bleiben kann.
+  const heutigesDatum = todayIsoDate();
   try {
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
       method: 'POST',
@@ -669,7 +670,7 @@ exports.handler = async (event) => {
         messages: [
           {
             role: 'system',
-            content: `Du bist der Weck AI Assistant. Hier ist dein gesamtes Wissen:\n${KNOWLEDGE_BASE}${liveDataBlock}`,
+            content: `Du bist der Weck AI Assistant. Heutiges Datum: ${heutigesDatum}. Nutze dieses Datum, um mit Datumsangaben im Text (z. B. Urlaubszeiträumen von Kunden) zu vergleichen und zu bestimmen, ob "heute" innerhalb eines genannten Zeitraums liegt.\n\nHier ist dein gesamtes Wissen:\n${KNOWLEDGE_BASE}${liveDataBlock}`,
           },
           { role: 'user', content: userMessage },
         ],
