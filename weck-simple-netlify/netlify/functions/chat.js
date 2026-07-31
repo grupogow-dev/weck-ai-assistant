@@ -534,11 +534,11 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Keine Nachricht erhalten' }) };
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'OPENAI_API_KEY ist nicht konfiguriert (Netlify Umgebungsvariablen prüfen).' }),
+      body: JSON.stringify({ error: 'GEMINI_API_KEY ist nicht konfiguriert (Netlify Umgebungsvariablen prüfen).' }),
     };
   }
 
@@ -573,15 +573,17 @@ exports.handler = async (event) => {
     liveDataBlock += `\n\nLIVE_DATEN_FAHRPLAN: Live-Abfrage des Fahrplans ist fehlgeschlagen (${e.message}).`;
   }
 
+  // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
+  // damit der Rest des Codes (messages/roles-Format) unverändert bleiben kann.
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gemini-2.5-flash',
         temperature: 0.3,
         messages: [
           {
@@ -597,7 +599,7 @@ exports.handler = async (event) => {
       const errText = await response.text();
       return {
         statusCode: 502,
-        body: JSON.stringify({ error: 'OpenAI-Fehler: ' + errText.slice(0, 200) }),
+        body: JSON.stringify({ error: 'Gemini-Fehler: ' + errText.slice(0, 200) }),
       };
     }
 
