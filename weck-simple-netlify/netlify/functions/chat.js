@@ -176,7 +176,11 @@ WICHTIG ZU "LIVE_DATEN"-Abschnitten weiter unten (falls vorhanden): Das sind
 tatsächliche, gerade eben aus der Zeiterfassungs-Datenbank abgerufene Zahlen
 zu Arbeitsstunden, Überstunden und Urlaub eines Mitarbeiters — nutze diese
 bevorzugt für konkrete Zahlenfragen ("wie viele Überstunden hat X"), da sie
-aktuell sind, im Gegensatz zum statischen Team-Verzeichnis oben.
+aktuell sind, im Gegensatz zum statischen Team-Verzeichnis oben. Ein
+LIVE_DATEN_HEUTE-Abschnitt (falls vorhanden) zeigt den heutigen Status ALLER
+Mitarbeiter (im Dienst / heute gearbeitet / noch nicht eingestempelt) — nutze
+ihn für allgemeine Fragen wie "wer arbeitet heute" oder "welche Mitarbeiter
+sind da".
 
 FAHRPLAN 2027 (Fahrer / Botendienst-Schichtplan): Es gibt 9 Fahrer, alle auf
 Minijob-Basis (Grenze 43 Std./Monat), mit 8 Urlaubstagen/Jahr Anspruch
@@ -367,6 +371,20 @@ async function getLiveEmployeeStatsForMessage(message) {
       if (date.startsWith(ym)) monthMinutes += computeDayMinutes(entries[date]);
     });
 
+    // Heutiger Anwesenheitsstatus — nutzt dieselben "entries", die wir gerade
+    // schon für die Monatsstunden geholt haben, also keine zusätzliche Abfrage.
+    const todayIso = todayIsoDate();
+    const todayEvents = entries[todayIso];
+    let heutigerStatus = 'noch nicht eingestempelt';
+    if (todayEvents && todayEvents.length) {
+      const sortedToday = [...todayEvents].sort((a, b) => a.time.localeCompare(b.time));
+      const lastToday = sortedToday[sortedToday.length - 1];
+      heutigerStatus =
+        lastToday.type === 'start' || lastToday.type === 'pause_end'
+          ? 'gerade im Dienst'
+          : 'heute gearbeitet, aktuell ausgestempelt';
+    }
+
     const empRequests = [];
     for (const k of requestKeys) {
       const r = await fetchKvDoc(k);
@@ -401,6 +419,7 @@ async function getLiveEmployeeStatsForMessage(message) {
     results.push({
       name: `${emp.vorname} ${emp.nachname}`,
       position: emp.position || '',
+      heutigerStatus,
       monat: ym,
       geleisteteStundenDiesenMonat: (monthMinutes / 60).toFixed(1),
       sollStundenDiesenMonat: (sollMinutes / 60).toFixed(1),
@@ -414,6 +433,52 @@ async function getLiveEmployeeStatsForMessage(message) {
     });
   }
   return { results };
+}
+
+// Erkennt allgemeine Fragen zur heutigen Belegschaft ("wer arbeitet heute",
+// "welche Mitarbeiter sind heute da") und prüft für JEDEN Mitarbeiter, ob es
+// heute einen Zeiterfassungs-Eintrag gibt und ob die Person gerade eingestempelt
+// ist (letztes Ereignis heute ist "start" oder "pause_end" ohne Abschluss).
+function looksLikeWhoIsWorkingQuery(message) {
+  const m = message.toLowerCase();
+  return /(wer|welche mitarbeiter|welche kolleg\w*)\s.*(arbeit|da|anwesend|im (büro|dienst)|eingestempelt|am arbeiten)/.test(m)
+    || /(wer ist|wer arbeitet).*(heute|gerade|jetzt)/.test(m);
+}
+
+async function getWhoIsWorkingTodayFromZeiterfassung() {
+  let employees;
+  try {
+    employees = await fetchKvDoc('employees');
+  } catch (e) {
+    return { error: 'Verbindung zur Zeiterfassungs-Datenbank fehlgeschlagen: ' + e.message };
+  }
+  if (!employees || !employees.length) return null;
+
+  const todayIso = todayIsoDate();
+
+  const statuses = await Promise.all(
+    employees.map(async (emp) => {
+      let entries = {};
+      try {
+        entries = (await fetchKvDoc('entries:' + emp.id)) || {};
+      } catch {
+        return { name: `${emp.vorname} ${emp.nachname}`, status: 'unbekannt' };
+      }
+      const todayEvents = entries[todayIso];
+      if (!todayEvents || !todayEvents.length) {
+        return { name: `${emp.vorname} ${emp.nachname}`, status: 'noch nicht eingestempelt' };
+      }
+      const sorted = [...todayEvents].sort((a, b) => a.time.localeCompare(b.time));
+      const lastEvent = sorted[sorted.length - 1];
+      const currentlyClockedIn = lastEvent.type === 'start' || lastEvent.type === 'pause_end';
+      return {
+        name: `${emp.vorname} ${emp.nachname}`,
+        status: currentlyClockedIn ? 'gerade im Dienst' : 'heute gearbeitet, aktuell ausgestempelt',
+      };
+    })
+  );
+
+  return { datumHeute: todayIso, mitarbeiterStatus: statuses };
 }
 
 // ---------------------------------------------------------------------
@@ -557,6 +622,23 @@ exports.handler = async (event) => {
     }
   } catch (e) {
     liveDataBlock = `\n\nLIVE_DATEN: Live-Abfrage der Zeiterfassung ist fehlgeschlagen (${e.message}). Weise die Person darauf hin, dass die aktuellen Stunden gerade nicht abrufbar sind.`;
+  }
+
+  // Allgemeine Frage nach der heutigen Belegschaft ("wer arbeitet heute") —
+  // separater Pfad, weil hier ALLE Mitarbeiter geprüft werden, nicht nur
+  // eine namentlich genannte Person.
+  if (looksLikeWhoIsWorkingQuery(userMessage)) {
+    try {
+      const todayStatus = await getWhoIsWorkingTodayFromZeiterfassung();
+      if (todayStatus && todayStatus.error) {
+        liveDataBlock += `\n\nLIVE_DATEN_HEUTE: Live-Abfrage ist fehlgeschlagen (${todayStatus.error}).`;
+      } else if (todayStatus) {
+        liveDataBlock += '\n\nLIVE_DATEN_HEUTE (Status aller Mitarbeiter, gerade eben abgerufen):\n' +
+          JSON.stringify(todayStatus);
+      }
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_HEUTE: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
   }
 
   // Dasselbe für den Fahrplan (Urlaub/Krankmeldungen der Fahrer) — eigener
