@@ -32,6 +32,70 @@
     font-family: 'Sora', 'Inter', sans-serif;
   }
 
+  /* ---------------- LOCK SCREEN (Passwortschutz) ---------------- */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 24px;
+    background: var(--ink);
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  #lock-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #lock-screen .lock-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+  #lock-screen .lock-title span { color: #9fc0d6; }
+  #lock-screen p.lock-sub {
+    color: #c3c9cf;
+    font-size: 13.5px;
+    margin: 0 0 4px;
+  }
+  #lock-screen form {
+    display: flex;
+    gap: 8px;
+  }
+  #lock-screen input {
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #45494f;
+    background: #33363b;
+    color: white;
+    font-size: 14.5px;
+    font-family: inherit;
+    outline: none;
+    width: 220px;
+  }
+  #lock-screen input:focus { border-color: var(--slate); }
+  #lock-screen button {
+    padding: 0 20px;
+    border-radius: 12px;
+    border: none;
+    background: var(--slate);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #lock-screen button:hover { background: var(--slate-dark); }
+  #lock-screen .lock-error {
+    color: #ff8a8a;
+    font-size: 13px;
+    min-height: 16px;
+  }
+
   /* ---------------- INTRO / MASCOT SCREEN ---------------- */
   #intro-screen {
     position: fixed;
@@ -70,6 +134,35 @@
   @keyframes mascot-float {
     0%, 100% { transform: translateY(0) rotate(-1.5deg); }
     50% { transform: translateY(-12px) rotate(1.5deg); }
+  }
+
+  /* ---- Bienen-Maskottchen ---- */
+  .bee {
+    width: 150px;
+    height: 150px;
+    animation: bee-float 3s ease-in-out infinite;
+    filter: drop-shadow(0 16px 22px rgba(38, 40, 44, 0.18));
+  }
+  @keyframes bee-float {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-16px) rotate(3deg); }
+  }
+  .bee .wing {
+    transform-origin: 50% 90%;
+    animation: wing-flap 0.22s ease-in-out infinite alternate;
+  }
+  .bee .wing-right { animation-delay: 0.05s; }
+  @keyframes wing-flap {
+    from { transform: scaleY(1) rotate(0deg); }
+    to { transform: scaleY(0.8) rotate(-10deg); }
+  }
+  .bee .antenna-dot {
+    animation: dot-pulse 1.6s ease-in-out infinite;
+  }
+  .bee .antenna-dot.right { animation-delay: 0.3s; }
+  @keyframes dot-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.18); }
   }
 
   .speech-bubble {
@@ -326,6 +419,17 @@
 </head>
 <body>
 
+<!-- ============ PANTALLA DE BLOQUEO (contraseña) ============ -->
+<div id="lock-screen">
+  <p class="lock-title display">Weck<span>GPT</span></p>
+  <p class="lock-sub">Bitte gib das Team-Passwort ein</p>
+  <form id="lock-form">
+    <input type="password" id="lock-input" placeholder="Passwort" autocomplete="off" autofocus />
+    <button type="submit">Enter</button>
+  </form>
+  <p class="lock-error" id="lock-error"></p>
+</div>
+
 <!-- ============ PANTALLA DE BIENVENIDA CON MASCOTA ============ -->
 <div id="intro-screen">
   <p class="intro-title display">WeckGPT</p>
@@ -334,7 +438,41 @@
       Hallo! Ich bin <strong>WeckGPT</strong>, dein digitaler Assistent bei
       Weck Dental. Was brauchst du heute?
     </div>
-    <img src="weckgpt-logo.png" alt="WeckGPT" class="mascot-logo" />
+    <img src="weckgpt-logo.png" alt="WeckGPT" class="mascot-logo" style="display:none" />
+    <svg class="bee" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flügel -->
+      <ellipse class="wing wing-left" cx="72" cy="82" rx="26" ry="38" fill="#eaf0f4" stroke="#c7d5df" stroke-width="2" opacity="0.9"/>
+      <ellipse class="wing wing-right" cx="128" cy="82" rx="26" ry="38" fill="#eaf0f4" stroke="#c7d5df" stroke-width="2" opacity="0.9"/>
+
+      <!-- Fühler -->
+      <path d="M84 70 Q76 48 68 38" stroke="#26282c" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M116 70 Q124 48 132 38" stroke="#26282c" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle class="antenna-dot left" cx="68" cy="36" r="6" fill="#4f7290"/>
+      <circle class="antenna-dot right" cx="132" cy="36" r="6" fill="#4f7290"/>
+
+      <!-- Körper -->
+      <ellipse cx="100" cy="120" rx="46" ry="52" fill="#fafafa" stroke="#26282c" stroke-width="4"/>
+      <path d="M56 100 A46 52 0 0 0 56 140 Z" fill="#26282c"/>
+      <path d="M56 118 A46 52 0 0 0 60 138 L140 138 A46 52 0 0 0 144 118 Z" fill="#4f7290"/>
+      <path d="M58 96 L142 96 A46 52 0 0 1 144 118 L56 118 A46 52 0 0 1 58 96 Z" fill="#26282c"/>
+
+      <!-- Kopf -->
+      <circle cx="100" cy="72" r="30" fill="#26282c"/>
+      <circle cx="90" cy="70" r="8" fill="white"/>
+      <circle cx="110" cy="70" r="8" fill="white"/>
+      <circle cx="91" cy="71" r="4" fill="#1a1b1e"/>
+      <circle cx="111" cy="71" r="4" fill="#1a1b1e"/>
+      <path d="M88 84 Q100 94 112 84" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+      <!-- WeckGPT-Abzeichen auf dem Bauch -->
+      <g transform="translate(100,150)">
+        <path d="M-11 -14 C-11 -20 -5 -24 0 -20 C5 -24 11 -20 11 -14 C11 -6 6 2 2 10 C1 12 -1 12 -2 10 C-6 2 -11 -6 -11 -14 Z"
+              fill="white" stroke="#4f7290" stroke-width="2"/>
+        <circle cx="-4" cy="-13" r="1.6" fill="#26282c"/>
+        <circle cx="0" cy="-13" r="1.6" fill="#26282c"/>
+        <circle cx="4" cy="-13" r="1.6" fill="#26282c"/>
+      </g>
+    </svg>
   </div>
 
   <form class="intro-form" id="intro-form">
@@ -372,6 +510,33 @@
 </div>
 
 <script>
+  // ---------------- PASSWORTSCHUTZ ----------------
+  // Einfacher Schutz auf Client-Seite: hält zufällige Besucher fern, ist
+  // aber KEIN echter Sicherheitsmechanismus (das Passwort steht im
+  // Quellcode und ist für jeden sichtbar, der "Seitenquelltext anzeigen"
+  // nutzt). Für echte Sicherheit: Netlify Pro-Plan → Password Protection.
+  const TEAM_PASSWORD = 'weckdental2026';
+  const lockScreen = document.getElementById('lock-screen');
+  const lockForm = document.getElementById('lock-form');
+  const lockInput = document.getElementById('lock-input');
+  const lockError = document.getElementById('lock-error');
+
+  if (sessionStorage.getItem('weckgpt_unlocked') === 'true') {
+    lockScreen.classList.add('hidden');
+  }
+
+  lockForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (lockInput.value === TEAM_PASSWORD) {
+      sessionStorage.setItem('weckgpt_unlocked', 'true');
+      lockScreen.classList.add('hidden');
+    } else {
+      lockError.textContent = 'Falsches Passwort. Bitte erneut versuchen.';
+      lockInput.value = '';
+      lockInput.focus();
+    }
+  });
+
   const introScreen = document.getElementById('intro-screen');
   const chatScreen = document.getElementById('chat-screen');
   const introForm = document.getElementById('intro-form');
@@ -483,5 +648,7 @@
 
 </body>
 </html>
+
+  
 
 
