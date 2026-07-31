@@ -3,189 +3,481 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Weck AI Assistant</title>
+<title>WeckGPT — Ihr intelligenter Assistent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --blue: #0057A8;
-    --blue-dark: #003D78;
-    --gray: #F4F5F7;
+    --ink: #26282c;
+    --ink-soft: #4a4d54;
+    --slate: #4f7290;
+    --slate-dark: #3b5a75;
+    --slate-light: #eaf0f4;
+    --slate-pale: #dbe4ea;
+    --paper: #fafafa;
+    --white: #ffffff;
+    --radius-lg: 22px;
+    --radius-md: 16px;
   }
   * { box-sizing: border-box; }
-  body {
+  html, body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--gray);
-    color: #1a1a2e;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .display {
+    font-family: 'Sora', 'Inter', sans-serif;
+  }
+
+  /* ---------------- INTRO / MASCOT SCREEN ---------------- */
+  #intro-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 24px;
+    background:
+      radial-gradient(60% 50% at 50% 15%, var(--slate-light) 0%, transparent 70%),
+      var(--paper);
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 20;
+  }
+  #intro-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .mascot-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .mascot-logo {
+    width: 132px;
+    height: 132px;
+    object-fit: contain;
+    animation: mascot-float 3.4s ease-in-out infinite;
+    filter: drop-shadow(0 14px 26px rgba(38, 40, 44, 0.16));
+  }
+  @keyframes mascot-float {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-12px) rotate(1.5deg); }
+  }
+
+  .speech-bubble {
+    position: relative;
+    background: var(--white);
+    border: 1px solid var(--slate-pale);
+    border-radius: var(--radius-lg);
+    padding: 18px 24px;
+    max-width: 360px;
+    text-align: center;
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    box-shadow: 0 10px 30px rgba(38, 40, 44, 0.06);
+    margin-bottom: 6px;
+    animation: bubble-in 0.6s ease both 0.15s;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 16px;
+    height: 16px;
+    background: var(--white);
+    border-right: 1px solid var(--slate-pale);
+    border-bottom: 1px solid var(--slate-pale);
+  }
+  @keyframes bubble-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .speech-bubble strong { color: var(--slate-dark); }
+
+  .intro-title {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .intro-form {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 4px;
+  }
+  .intro-form input {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--slate-pale);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .intro-form input:focus {
+    border-color: var(--slate);
+    box-shadow: 0 0 0 4px rgba(79, 114, 144, 0.12);
+  }
+  .intro-form button {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--slate-dark) 100%);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s;
+  }
+  .intro-form button:hover { transform: scale(1.06); }
+  .intro-form button:active { transform: scale(0.96); }
+
+  .intro-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 420px;
+  }
+  .intro-suggestions button {
+    background: var(--white);
+    border: 1px solid var(--slate-pale);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .intro-suggestions button:hover {
+    border-color: var(--slate);
+    color: var(--slate-dark);
+    background: var(--slate-light);
+  }
+
+  /* ---------------- CHAT SCREEN ---------------- */
+  #chat-screen {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    opacity: 0;
+    transition: opacity 0.5s ease;
   }
-  header {
-    background: white;
-    padding: 16px 20px;
+  #chat-screen.visible { opacity: 1; }
+
+  header.chat-header {
+    background: var(--white);
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid #e2e5e9;
+    border-bottom: 1px solid var(--slate-pale);
   }
-  .logo {
-    width: 36px; height: 36px;
-    background: var(--blue);
-    border-radius: 10px;
-    color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 600;
+  header.chat-header img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
   }
-  header h1 { font-size: 15px; margin: 0; }
-  header p { font-size: 12px; color: #6b7280; margin: 0; }
+  header.chat-header h1 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: 700;
+  }
+  header.chat-header h1 span { color: var(--slate-dark); }
+  header.chat-header p {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin: 1px 0 0;
+    letter-spacing: 0.02em;
+  }
 
   #chat {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 22px 20px;
     max-width: 720px;
     margin: 0 auto;
     width: 100%;
   }
+  .msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 16px;
+    animation: msg-in 0.35s ease both;
+  }
+  @keyframes msg-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg-row.user { justify-content: flex-end; }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--slate-light);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .avatar img { width: 20px; height: 20px; object-fit: contain; }
+
   .msg {
-    max-width: 80%;
+    max-width: 75%;
     padding: 12px 16px;
-    border-radius: 16px;
-    margin-bottom: 12px;
-    font-size: 14px;
-    line-height: 1.5;
+    border-radius: var(--radius-md);
+    font-size: 14.5px;
+    line-height: 1.55;
     white-space: pre-wrap;
   }
   .msg.user {
-    background: var(--blue);
+    background: linear-gradient(135deg, var(--ink) 0%, var(--slate-dark) 100%);
     color: white;
-    margin-left: auto;
     border-bottom-right-radius: 4px;
   }
   .msg.bot {
-    background: white;
-    border: 1px solid #e2e5e9;
+    background: var(--white);
+    border: 1px solid var(--slate-pale);
     border-bottom-left-radius: 4px;
+    color: var(--ink);
   }
-  .msg.bot.loading { color: #9ca3af; font-style: italic; }
+  .msg.bot.loading { color: #9aa2ab; }
+  .typing-dots { display: inline-flex; gap: 4px; vertical-align: middle; }
+  .typing-dots span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--slate);
+    animation: typing-bounce 1.1s infinite ease-in-out;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
 
-  .suggestions {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 20px 12px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .suggestions button {
-    background: white;
-    border: 1px solid #e2e5e9;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    color: #374151;
-  }
-  .suggestions button:hover { border-color: var(--blue); color: var(--blue); }
-
-  form {
+  form.chat-input {
     max-width: 720px;
     margin: 0 auto;
     width: 100%;
     display: flex;
     gap: 8px;
-    padding: 16px 20px 20px;
+    padding: 12px 20px 20px;
   }
-  input[type="text"] {
+  form.chat-input input {
     flex: 1;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
+    padding: 13px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--slate-pale);
+    font-size: 14.5px;
+    font-family: inherit;
     outline: none;
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  input[type="text"]:focus { border-color: var(--blue); }
-  button.send {
-    background: var(--blue);
-    color: white;
+  form.chat-input input:focus {
+    border-color: var(--slate);
+    box-shadow: 0 0 0 4px rgba(79, 114, 144, 0.12);
+  }
+  form.chat-input button {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 50%;
     border: none;
-    border-radius: 12px;
-    padding: 0 20px;
-    font-size: 14px;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--slate-dark) 100%);
+    color: white;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, opacity 0.15s;
   }
-  button.send:hover { background: var(--blue-dark); }
-  button.send:disabled { opacity: 0.5; cursor: not-allowed; }
+  form.chat-input button:hover { transform: scale(1.06); }
+  form.chat-input button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mascot-logo, .msg-row, .speech-bubble { animation: none !important; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">W</div>
-  <div>
-    <h1>Weck AI Assistant</h1>
-    <p>Antworten direkt aus den Infos von Weck Dental Technik</p>
+<!-- ============ PANTALLA DE BIENVENIDA CON MASCOTA ============ -->
+<div id="intro-screen">
+  <p class="intro-title display">WeckGPT</p>
+  <div class="mascot-wrap">
+    <div class="speech-bubble" id="greeting-bubble">
+      Hallo! Ich bin <strong>WeckGPT</strong>, dein digitaler Assistent bei
+      Weck Dental. Was brauchst du heute?
+    </div>
+    <img src="weckgpt-logo.png" alt="WeckGPT" class="mascot-logo" />
   </div>
-</header>
 
-<div id="chat"></div>
+  <form class="intro-form" id="intro-form">
+    <input type="text" id="intro-input" placeholder="Frage eingeben…" autocomplete="off" autofocus />
+    <button type="submit" aria-label="Senden">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12L21 4L13 21L11 13L3 12Z" stroke="white" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    </button>
+  </form>
 
-<div class="suggestions" id="suggestions">
-  <button>Wo ist Weck Dental und wie sind die Öffnungszeiten?</button>
-  <button>Was ist eine Zirkonkrone?</button>
-  <button>Was ist Valplast?</button>
-  <button>Wer leitet das Labor?</button>
+  <div class="intro-suggestions">
+    <button data-q="Wo ist Weck Dental und wie sind die Öffnungszeiten?">Öffnungszeiten</button>
+    <button data-q="Wer ist heute krank oder im Urlaub?">Wer ist heute krank?</button>
+    <button data-q="Was ist eine Zirkonkrone?">Was ist eine Zirkonkrone?</button>
+  </div>
 </div>
 
-<form id="form">
-  <input type="text" id="input" placeholder="Frage stellen…" autocomplete="off" />
-  <button class="send" type="submit">Senden</button>
-</form>
+<!-- ============ PANTALLA DE CHAT ============ -->
+<div id="chat-screen">
+  <header class="chat-header">
+    <img src="weckgpt-logo.png" alt="WeckGPT" />
+    <div>
+      <h1 class="display">Weck<span>GPT</span></h1>
+      <p>Ihr intelligenter Assistent</p>
+    </div>
+  </header>
+
+  <div id="chat"></div>
+
+  <form class="chat-input" id="chat-form">
+    <input type="text" id="chat-input" placeholder="Frage stellen…" autocomplete="off" />
+    <button type="submit" id="chat-send" aria-label="Senden">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12L21 4L13 21L11 13L3 12Z" stroke="white" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    </button>
+  </form>
+</div>
 
 <script>
-  const chat = document.getElementById('chat');
-  const form = document.getElementById('form');
-  const input = document.getElementById('input');
-  const suggestions = document.getElementById('suggestions');
+  const introScreen = document.getElementById('intro-screen');
+  const chatScreen = document.getElementById('chat-screen');
+  const introForm = document.getElementById('intro-form');
+  const introInput = document.getElementById('intro-input');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatSend = document.getElementById('chat-send');
+  const chatBox = document.getElementById('chat');
+  const greetingBubble = document.getElementById('greeting-bubble');
 
-  function addMessage(text, sender, loading) {
-    const div = document.createElement('div');
-    div.className = 'msg ' + sender + (loading ? ' loading' : '');
-    div.textContent = text;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-    return div;
+  // Ein paar Begrüßungen, die abwechseln, falls die Seite neu geladen wird
+  const GREETINGS = [
+    'Hallo! Ich bin <strong>WeckGPT</strong>, dein digitaler Assistent bei Weck Dental. Was brauchst du heute?',
+    'Willkommen zurück! Frag mich etwas über Kunden, Team, Fahrplan oder unsere Leistungen.',
+    'Hi! Ich helfe dir gerne weiter — wonach suchst du?',
+  ];
+  greetingBubble.innerHTML = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+
+  let chatStarted = false;
+
+  function goToChat(firstMessage) {
+    if (chatStarted) return;
+    chatStarted = true;
+    introScreen.classList.add('hidden');
+    setTimeout(() => {
+      chatScreen.classList.add('visible');
+      chatInput.focus();
+    }, 200);
+    if (firstMessage && firstMessage.trim()) {
+      sendMessage(firstMessage);
+    }
+  }
+
+  introForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    goToChat(introInput.value);
+  });
+
+  document.querySelectorAll('.intro-suggestions button').forEach((btn) => {
+    btn.addEventListener('click', () => goToChat(btn.dataset.q));
+  });
+
+  function addMessage(text, sender, isLoading) {
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + sender;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    if (sender === 'bot') {
+      const img = document.createElement('img');
+      img.src = 'weckgpt-logo.png';
+      img.alt = '';
+      avatar.appendChild(img);
+    } else {
+      avatar.style.background = 'var(--slate-pale)';
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg ' + sender + (isLoading ? ' loading' : '');
+    if (isLoading) {
+      bubble.innerHTML = 'WeckGPT denkt nach <span class="typing-dots"><span></span><span></span><span></span></span>';
+    } else {
+      bubble.textContent = text;
+    }
+
+    if (sender === 'user') {
+      row.appendChild(bubble);
+      row.appendChild(avatar);
+    } else {
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+    }
+
+    chatBox.appendChild(row);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return bubble;
   }
 
   async function sendMessage(text) {
-    if (!text.trim()) return;
-    suggestions.style.display = 'none';
+    if (!text || !text.trim()) return;
     addMessage(text, 'user');
-    input.value = '';
-    const loadingEl = addMessage('Weck AI denkt nach…', 'bot', true);
+    chatInput.value = '';
+    chatSend.disabled = true;
+    const loadingBubble = addMessage('', 'bot', true);
 
     try {
       const res = await fetch('/.netlify/functions/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ message: text }),
       });
       const data = await res.json();
-      loadingEl.classList.remove('loading');
-      loadingEl.textContent = data.reply || 'Entschuldigung, ich konnte keine Antwort finden.';
+      loadingBubble.classList.remove('loading');
+      loadingBubble.textContent = data.reply || data.error || 'Entschuldigung, ich konnte keine Antwort finden.';
     } catch (err) {
-      loadingEl.classList.remove('loading');
-      loadingEl.textContent = 'Es gab ein Problem bei der Verbindung. Bitte erneut versuchen.';
+      loadingBubble.classList.remove('loading');
+      loadingBubble.textContent = 'Es gab ein Problem bei der Verbindung. Bitte erneut versuchen.';
+    } finally {
+      chatSend.disabled = false;
+      chatInput.focus();
     }
   }
 
-  form.addEventListener('submit', (e) => {
+  chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    sendMessage(input.value);
-  });
-
-  suggestions.querySelectorAll('button').forEach((btn) => {
-    btn.addEventListener('click', () => sendMessage(btn.textContent));
+    sendMessage(chatInput.value);
   });
 </script>
 
