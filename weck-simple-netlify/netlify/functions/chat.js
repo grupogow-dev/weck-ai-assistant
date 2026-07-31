@@ -583,8 +583,7 @@ exports.handler = async (event) => {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-flash-lite',
-        temperature: 0.3,
+        model: 'gemini-3.5-flash-lite',
         messages: [
           {
             role: 'system',
@@ -617,4 +616,3 @@ exports.handler = async (event) => {
     };
   }
 };
-
