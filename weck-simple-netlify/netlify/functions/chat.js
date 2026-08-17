@@ -137,6 +137,143 @@ bald Geburtstag" nutze IMMER den ANSTEHENDE_GEBURTSTAGE-Abschnitt weiter
 unten (falls vorhanden) — dort sind die Tage bis zum Geburtstag bereits
 korrekt vorgerechnet.
 
+LIEFERANT – ZAHNWERK FRÄSTECHNIK GMBH (Preisliste 2026, gültig ab 1. Februar
+2026): Dentales Fertigungszentrum für Fräsarbeiten und 3D-Druck, am selben
+Standort wie Weck Dental (Hausinger Str. 3b, 40764 Langenfeld). Gegründet
+2006 in Solingen. Kontakt: +49 (0)2173 2005944, zahnwerk-fraestechnik.de.
+Geschäftsführung: Darko Savic (ZT) und Sabine Weck (ZTM), Prokurist Horst
+Weck. Team u. a.: Marvin Andritzke (Büromanagement), Jurij Kan
+(Fertigungsleiter), Tobias Welzel, Nicole Keller, Firas Kassar, Nils Roeder,
+Katharina Evertz (ZTM), Jesus Jimenez, Panagiotis Baklavas (CAM), Michaela
+Schmidtke, Pascal Weick, Söhret Deniz.
+
+Zahlungsbedingungen: 10 Tage nach Rechnungsdatum abzgl. 2% Skonto, oder
+30 Tage netto ohne Abzug; 3% Skonto bei SEPA-Lastschriftmandat. Alle Preise
+zzgl. 19% MwSt. und ggf. Versandkosten.
+
+WICHTIG: Die Preise unterscheiden sich je nachdem, WIE der Auftrag
+eingereicht wird — Datentransfer (eigene CAD-Konstruktion) ist am
+günstigsten, Intraoraldaten-Transfer (Rohdaten vom Scanner) liegt in der
+Mitte, Modelleinsendung (physisches Modell) ist am teuersten, da Zahnwerk
+dort selbst konstruiert.
+
+--- PREISE BEI DATENTRANSFER (eigene Konstruktion eingereicht) ---
+Zirkonoxid: ZrO2 opaque/transluzent 28,90€ · priti extra transluzent 35,90€
+· priti multitransluzent plus 38,90€ · Katana UTML 39,90€ · Katana YML
+42,90€ (kein Aufpreis für vollanatomische Fräsung).
+Glaskeramik: IPS e.max CAD 52,90€ · Composite 49,90€ (Aufpreis vollanat.
+4,90€).
+CoCr additiv (Lasermelting): 13,90-17,90€ · Primärteleskop 13,90€.
+CoCr gefräst: 24,90€ (Aufpreis vollanat. 2,90€) · Primärteleskop 26,90€ ·
+Implantatstrukturen (Medentika Preform 99,90€, Brückenpfosten 117,90€,
+Brückenglied 15,90€, Stegpfosten 117,90€, Steganteil 11,90€).
+Titan: 26,90€ (Aufpreis vollanat. 2,90€) · Primärteleskop 28,90€ ·
+Implantatstrukturen (Medentika Preform 99,90€, Brückenpfosten 119,90€,
+Brückenglied 15,90€, Stegpfosten 119,90€, Steganteil 11,90€).
+Original-Preform-Abutments mit Herstellergarantie: Camlog/Conelog/Camlog iSy
+114,90€ · Straumann Bone Level/synOcta/BLX/TLX 121,90€ · Medentis ICX
+99,90€ · TRI Narrow/Vent/Octa 114,90€ · Champion Evolution 114,90€.
+Kunststoffe 3D-Druck: Aufbissschiene 44,90€ · Reiseprothese/Provisorium
+12,90€ · Bohrschablone 79,00€.
+Kunststoffe gefräst: Polyamid-Aufbissschiene 81,90€ · PMMA Cast 15,90€ ·
+PMMA Multilayer 19,90€ (Aufpreis vollanat. 2,90€).
+PEEK: Einheit 44,90€ · Primärteleskop 59,90€ · Sekundärteleskop 69,90€
+(mit Sitec 79,90€) · Retention 33,90€ · palatinale Platte 295,00€ ·
+sublingual Bügel 250,00€ · Klammerelement 49,90€.
+
+--- PREISE BEI INTRAORALDATEN-TRANSFER (Rohdaten vom Intraoralscanner) ---
+Zirkonoxid: opaque/transluzent 48,90€ · priti extra transluzent multicolor
+55,90€ · priti multitransluzent plus 58,90€ · Katana UTML 59,90€ · Katana
+YML 62,90€ (Aufpreis vollanat. Konstruktion/Fräsung/Ausarbeitung 10,00€).
+Glaskeramik: IPS e.max CAD 72,90€ · Composite 69,90€ (Aufpreis 10,00€).
+CoCr additiv: 33,90€ · Primärteleskop 33,90€ (Aufpreis 10,00€).
+CoCr gefräst: 44,90€ · Primärteleskop 46,90€ (Aufpreis 10,00€) ·
+Implantatstrukturen (Medentika 114,90€, Brückenpfosten 132,90€,
+Brückenglied 25,90€, Stegpfosten 132,90€, Steganteil 20,90€).
+Titan: 46,90€ (Aufpreis vollanat. 2,90€) · Primärteleskop 48,90€ ·
+Implantatstrukturen (Medentika 114,90€, Brückenpfosten 134,90€,
+Brückenglied 25,00€, Stegpfosten 134,90€, Steganteil 20,00€).
+Original-Preform-Abutments: Camlog/Conelog/Camlog iSy 129,90€ · Straumann
+Bone Level synOcta/BLX/TLX 136,90€ · Medentis ICX 114,90€ · TRI
+Narrow/Vent/Octa 129,90€ · Champion Evolution 129,90€.
+Kunststoffe 3D-Druck: Aufbissschiene 69,90€ · Reiseprothese/Provisorium
+32,90€.
+Kunststoffe gefräst: Polyamid-Aufbissschiene 106,90€ · PMMA Cast 35,90€ ·
+PMMA Multilayer 39,90€ (Aufpreis 10,00€).
+PEEK: Einheit 64,90€ · Primärteleskop 79,90€ · Sekundärteleskop 89,90€
+(mit Sitec 99,90€) · Retention 39,90€ · palatinale Platte 365,00€ ·
+sublingual Bügel 320,00€ · Klammerelement 59,90€.
+Modellherstellung 3D-Druck: Modellpauschale 8,90€ · Modell pro Quadrant
+10,45€ · 2 Quadranten 20,90€ · OK & UK komplett 29,90€ · Einzelstumpf/
+Präparation 2,10€ · Platzhalter für Laboranalog 1,50€ · Gingivamaske pro
+Segment 9,50€ / pro Quadrant 24,90€ · DIM-Analog ab 34,90€.
+
+--- PREISE BEI MODELLEINSENDUNG (physisches Modell, Zahnwerk konstruiert) ---
+Zirkonoxid: opaque/transluzent 54,90€ · priti extra transluzent multicolor
+61,90€ · priti multitransluzent plus 64,90€ · Katana UTML 65,90€ · Katana
+YML 68,90€ (Aufpreis 10,00€).
+Glaskeramik: IPS e.max CAD 78,90€ · Composite 75,90€ (Aufpreis 10,00€).
+CoCr additiv: 39,90€ · Primärteleskop 39,90€ (Aufpreis 10,00€).
+CoCr gefräst: 50,90€ (Aufpreis 10,00€) · Primärteleskop 52,90€ ·
+Sekundärteleskop 91,90€ (mit Sitec Tk-Soft 101,90€) · gefräste Retention
+26,90€ · Tk-Soft Friktionselement 21,90€ (mini 25,90€) ·
+Sekundärbrücke/Hybridkonstruktion pro Quadrant 299,90€ ·
+Implantatstrukturen (Medentika 119,00€, Brückenpfosten 137,90€,
+Brückenglied 25,00€, Stegpfosten 137,90€, Steganteil 20,00€).
+Titan: 52,90€ (Aufpreis 10,00€) · Primärteleskop 54,90€ · Sekundärteleskop
+(taktil, nur Absprache) 92,90€ (mit Tk-Soft 102,90€) · gefräste Retention
+26,90€ · Friktionselement 21,90-25,90€ · Sekundärbrücke/Hybridkonstruktion
+pro Quadrant 329,90€ · Implantatstrukturen (Medentika 119,90€,
+Brückenpfosten 139,90€, Brückenglied 25,00€, Stegpfosten 139,90€,
+Steganteil 20,00€).
+Titan Original-OEM-Abutments: Camlog/Conelog/Camlog iSy 134,90€ · Straumann
+Bone Level/synOcta 141,90€ · Medentis ICX 119,90€ · TRI Narrow/Vent/Octa
+134,90€ · Champion Evolution 134,90€.
+Kunststoffe 3D-Druck: Aufbissschiene 74,90€ · Reiseprothese/Provisorium
+38,90€.
+Kunststoffe gefräst: Aufbissschiene Polyamid 111,90€ · PMMA Cast 41,90€ ·
+PMMA Multilayer 45,90€ (Aufpreis 10,00€).
+PEEK: Einheit 70,90€ · Primärteleskop 85,90€ · Sekundärteleskop 95,90€
+(mit Sitec 105,90€) · Retention 49,90€ · palatinale Platte 365,00€ ·
+sublingual Bügel 320,00€ · Klammerelement 59,90€ ·
+Sekundärbrücke/Hybridkonstruktion: Preis auf Anfrage.
+
+--- ZUSATZLEISTUNGEN (gelten für alle drei Einreichungsarten, sofern nicht
+anders angegeben) ---
+ZW Premium Feinstfräsung 3,90€ · Umlaufende Fräsung für Primärteleskop inkl.
+Politur 33,90€ · Politur Aufbissschiene 19,90€ · Bohrung Schraubenkanal
+9,90€ · Bohrung für Locator 9,90€ · Verklebung Abutment mit Basis 12,90€
+(nur bei Modell-/Intraoraldaten-Kunden) · Precihorix-/Precivertixgeschiebe
+39,90€ (Datensatz) bzw. 59,90€ (Modell/Intraoral) · Teilungsgeschiebe
+39,90€ (Datensatz) bzw. 79,90€ (Modell/Intraoral) · Schubverteilungsarm mit
+Interlock 14,90€ (nur Modell/Intraoral) · Bearbeiten im Rohzustand vor dem
+Sintern (Zirkon) 5,90€ · Aufpassen & Ausarbeiten auf Modell bei
+Datensatz-Einsendung 10,00€ · Keramische Verblendung Zirkon pro Einheit
+129,90€ (nur Modell/Intraoral) · Individualisieren (e.max/Zirkonoxid)
+39,90€ · Glanzbrand 26,90€ · Kristallisationsbrand (e.max) 13,90€ ·
+Einsetzschlüssel gedruckt 35,90€ (+10€ pro weiterem Implantat).
+
+Fräsbare Implantat-Anschlussgeometrien (direktverschraubt): ASTRA TECH
+OsseoSpeed/EV, Biomet 3i Certain/OSSEOTITE, bredent SKY (auch fast&fixed),
+CAMLOG, Dentsply-Friadent FRIALIT-Xive, Medentis ICX, Neoss, Nobel Biocare
+Active/Branemark/Multi-unit/Replace Select, Straumann Bone Level/synOcta,
+Zimmer Tapered Screw-Vent — plus Titan-Preform-Systeme Conelog, Camlog iSy,
+TRI-Narrow/Vent/Octa. Alle anderen Systeme auf Anfrage.
+
+Versand: UPS Express 12-Uhr-Anlieferung (Folgetag bis 12:00) 9,90€ · UPS
+Express Saver-Abholung (selber Tag, bis 16:00 beauftragt) 11,90€ · UPS
+Express-Anlieferung (Folgetag bis 10:30) 13,90€ · GO!-EXPRESS Versand
+12,90€ · GO!-EXPRESS Abholung 19,90€ · GO!-EXPRESS Terminlieferung bis
+09:00 34,90€.
+
+Lieferzeiten bei Modelleinsendung: Einzelkronen/kleine Brücken 1-2
+Werktage · komplexe Versorgungen 2-8 Werktage · Kunststoffe 3D-Druck 2-3
+Werktage · Aufbissschienen 4-5 Werktage.
+Lieferzeiten bei Datentransfer (Eingang bis 13:00 Uhr): alle gefrästen
+Materialien und direktverschraubte Versorgungen 1 Werktag · CoCr additiv
+und Kunststoffe 3D-Druck 2-3 Werktage · Intraoralscans 4-5 Werktage (nach
+Absprache).
+
 KUNDENVERZEICHNIS (Zahnarztpraxen und Partnerlabore, die von Weck Dental betreut
 werden — Praxisname, Adresse, Telefon, E-Mail, ggf. behandelnde Ärzte und
 aktuell erfasster Urlaub):
