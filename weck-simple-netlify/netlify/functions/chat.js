@@ -77,6 +77,66 @@ klassisch mit Abdrücken oder komplett digital mit Intraoralscan/CAD-CAM.
 Geeignet bei Zahnlücken, ästhetisch sensiblen Bereichen, Interimsversorgungen
 und Metallallergien.
 
+LEISTUNG – ABFORMUNGEN MIT MUNDSCANNERN (Intraoralscanner):
+Digitale Abformung statt klassischem Abdruck ist heute Standard. Weck Dental
+verarbeitet Scandaten aller gängigen Intraoralscanner-Marken direkt im
+digitalen CAD/CAM-Workflow. Vorteile: direkte Datenübermittlung ans Labor,
+höchste Präzision, weniger Korrekturen/Neuanfertigungen, schnellere
+Fertigung, mehr Patientenkomfort, planbarere Praxisabläufe. Der Workflow
+reicht von digitaler Modellherstellung über Konstruktion bis zur
+CAD/CAM-Fertigung. Bei Fragen zu Scannerkompatibilität oder Schulungen:
+Telefon 02173 – 85 23 40.
+
+LEISTUNG – ALLERGIEFREIER ZAHNERSATZ AUS KUNSTSTOFFEN (PEEK, Valplast,
+Clearsplint): Metallfreie Alternativen für Patienten mit Metallallergie,
+ganzheitlich orientierter Behandlung, empfindlichen Schleimhäuten oder hohem
+ästhetischem Anspruch bei Interimsversorgungen.
+- PEEK (Polyetheretherketon): Hochleistungspolymer mit knochenähnlicher
+  Elastizität, geringem Gewicht, röntgentransparent, keine bekannten
+  allergischen Reaktionen. Einsatz: provisorische Implantatabutments,
+  Aufbissschienen, mehrgliedrige Brücken, Teleskopkonstruktionen,
+  Modellgussprothesen mit Retentionselementen.
+- Valplast: Nylonbasis, weltweit bewährt. Frei von Metall/Allergenen,
+  gewebefreundlich, unzerbrechlich, hohe Transluzenz, geruchsneutral,
+  plaque-/verfärbungsresistent, CE-zertifiziertes Medizinprodukt. Einsatz:
+  Teilprothesen, Kinderprothesen, Interimsversorgungen, implantatgetragene
+  Übergangslösungen.
+- Clearsplint: MMA-freier (Methylmethacrylat-freier), metallfreier,
+  transparenter Spezialkunststoff. Thermoaktiv flexibel, sehr belastbar,
+  bruchstabil, unsichtbare Halteelemente. Einsatz: herausnehmbarer
+  Zahnersatz, ästhetische Interimsversorgungen (bis ca. 6 Monate),
+  MMA-freie Aufbissschienen. Für Labor/Praxis: leicht nachzuarbeiten, gut
+  polierbar, unterfütterbar, kurze Produktionszeit.
+
+LEISTUNG – ZAHNÄSTHETIK (aus Patientensicht): Keramik-Veneers (hauchdünne
+Keramikschalen zur Korrektur verfärbter/verdrehter/abgesplitterter
+Frontzähne, erhalten den natürlichen Zahn), Keramik-Inlays (ästhetische
+Alternative zu Amalgam/Kunststoff/Gold-Füllungen, kaum erkennbar), Vollkeramik
+ohne Metall (Kronen/Brücken, verträglich, farblich exakt anpassbar),
+Zirkonoxid-Zahnersatz (Hochleistungskeramik, auch für Implantatversorgungen).
+
+LEISTUNG – DENTALTECHNOLOGIEN (Überblick digitale/technische Verfahren):
+digitale Abformung via Intraoralscanner, Implantattechnik mit 3D-Navigation,
+Kombinationsarbeiten aus Edelmetall, Galvanotechnik (elektrochemischer
+Feingoldauftrag auf das Modell — dünner/homogener als Guss, bessere
+Passgenauigkeit, weniger Poren, hygienischer), Friktionserneuerung und
+Friktionsvergoldung (für Teleskop-/Doppelkronen), Vollkeramik/Glaskeramik/
+Metallkeramik, sowie Totalprothetik nach Prof. Gutowski (aufwändige
+Kiefervermessung für besseren Sitz und Halt durch Unterdruck/Saugwirkung,
+ganz ohne Implantate).
+
+LEISTUNG – ERGÄNZENDE LEISTUNGEN FÜR PATIENTEN: Aufbissschienen (mit/ohne
+adjustierter Oberfläche), Sportmundschutz (nach DGZMK-Empfehlung für alle
+gängigen Sportarten), Schnarcherschienen, Aligner-Schienen (auch per
+3D-Druck gefertigt), persönliche Beratung/Anpassung direkt im Weck-Labor,
+sowie persönliche Unterstützung der Behandlung durch Zahntechniker direkt
+in der Zahnarztpraxis vor Ort.
+
+GEBURTSTAGE VON ÄRZTEN UND PRAXISMITARBEITERINNEN: Für Fragen wie "wer hat
+bald Geburtstag" nutze IMMER den ANSTEHENDE_GEBURTSTAGE-Abschnitt weiter
+unten (falls vorhanden) — dort sind die Tage bis zum Geburtstag bereits
+korrekt vorgerechnet.
+
 KUNDENVERZEICHNIS (Zahnarztpraxen und Partnerlabore, die von Weck Dental betreut
 werden — Praxisname, Adresse, Telefon, E-Mail, ggf. behandelnde Ärzte und
 aktuell erfasster Urlaub):
@@ -183,7 +243,19 @@ ihn für allgemeine Fragen wie "wer arbeitet heute" oder "welche Mitarbeiter
 sind da". Ein LIVE_DATEN_CRM-Abschnitt (falls vorhanden) zeigt die letzten
 Kontakte (Besuche/Anrufe/WhatsApp/E-Mail) und Kundenwünsche zu einer
 genannten Praxis, live aus dem CRM — nutze ihn für Fragen wie "wann war der
-letzte Kontakt mit X" oder "was wollte Kunde Y zuletzt".
+letzte Kontakt mit X" oder "was wollte Kunde Y zuletzt". Ein
+LIVE_DATEN_CRM_BETRIEB-Abschnitt (falls vorhanden) zeigt je nach Frage offene
+Erinnerungen/Reklamationen, anstehende Termine, Kursangebote mit
+Interessenten, oder neue Kontakte/Leads — alles live aus dem CRM. Ein
+LIVE_DATEN_CRM_BENUTZER-Abschnitt (falls vorhanden) zeigt, wer Zugang zum CRM
+hat und mit welcher Rolle. LIVE_DATEN_TEAM_UEBERSTUNDEN und
+LIVE_DATEN_BESUCHE_GESAMT zeigen Summen über das GESAMTE Team bzw. ALLE
+Kunden (nicht nur eine Person). Ein ANSTEHENDE_GEBURTSTAGE-Abschnitt (falls
+vorhanden) listet Geburtstage in den nächsten 21 Tagen — die Tage bis zum
+Geburtstag ("inTagen") sind bereits fertig berechnet, rechne sie nicht neu.
+Bei "letztePersoenlicheBesucheVorOrt" im LIVE_DATEN_CRM-Abschnitt handelt es
+sich um tatsächliche Vor-Ort-Besuche mit Ein-/Auscheck-Zeit (Tagesroute),
+getrennt von den übrigen Kontaktkanälen.
 
 FAHRPLAN 2027 (Fahrer / Botendienst-Schichtplan): Es gibt 9 Fahrer, alle auf
 Minijob-Basis (Grenze 43 Std./Monat), mit 8 Urlaubstagen/Jahr Anspruch
@@ -309,6 +381,43 @@ async function fetchCrmDoc(key) {
   }
 }
 
+// Listet ALLE Dokumente einer eigenständigen Firestore-Collection (nicht das
+// app_data/kv-Muster) — wird für die "users"-Collection des CRM gebraucht.
+async function fetchCrmCollection(collectionName) {
+  const token = await getCrmIdToken();
+  let docs = [];
+  let pageToken = null;
+  let guard = 0;
+  do {
+    const url = `https://firestore.googleapis.com/v1/projects/${CRM_FIREBASE.projectId}/databases/(default)/documents/${collectionName}?pageSize=300${pageToken ? '&pageToken=' + pageToken : ''}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) break;
+    const data = await res.json();
+    (data.documents || []).forEach((doc) => {
+      docs.push({ id: doc.name.split('/').pop(), ...firestoreFieldsToJs(doc.fields || {}) });
+    });
+    pageToken = data.nextPageToken;
+    guard++;
+  } while (pageToken && guard < 10);
+  return docs;
+}
+
+// Team-Zugänge zum CRM selbst (wer hat einen Account, welche Rolle).
+async function getCrmUsersForMessage(message) {
+  const m = message.toLowerCase();
+  if (!/(benutzer|nutzer|zugang|zugriff|welche rolle|wer hat.*account)/.test(m)) return null;
+  try {
+    const users = await fetchCrmCollection('users');
+    return {
+      crmBenutzer: users
+        .filter((u) => !u.disabled)
+        .map((u) => ({ name: u.name, rolle: u.role, email: u.email })),
+    };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
 // Findet in der Frage genannte Kundennamen (Praxen) und holt Kontakthistorie
 // + Kundenwünsche live aus dem CRM — im selben Format, das das CRM intern
 // für seine eigene KI-Zusammenfassung nutzt (generateAiSummary).
@@ -337,16 +446,19 @@ async function getClientCrmInfoForMessage(message) {
 
   let visitsAll = [];
   let ordersAll = [];
+  let checkinsAll = [];
   try {
-    [visitsAll, ordersAll] = await Promise.all([
+    [visitsAll, ordersAll, checkinsAll] = await Promise.all([
       fetchCrmDoc('weck_visits_v1'),
       fetchCrmDoc('weck_orders_v1'),
+      fetchCrmDoc('weck_checkins_v1'),
     ]);
   } catch (e) {
     /* weiter ohne Verlauf, falls das fehlschlägt */
   }
   visitsAll = visitsAll || [];
   ordersAll = ordersAll || [];
+  checkinsAll = checkinsAll || [];
 
   const results = matched.slice(0, 2).map((c) => {
     const visits = visitsAll
@@ -357,6 +469,10 @@ async function getClientCrmInfoForMessage(message) {
       .filter((o) => o.clientId === c.id)
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 6);
+    const checkins = checkinsAll
+      .filter((ci) => ci.clientId === c.id)
+      .sort((a, b) => new Date(b.checkInAt) - new Date(a.checkInAt))
+      .slice(0, 5);
     return {
       name: c.name,
       notizen: c.notes || '',
@@ -373,13 +489,174 @@ async function getClientCrmInfoForMessage(message) {
         betrag: o.amount,
         zufriedenheit: o.satisfaction,
       })),
+      letztePersoenlicheBesucheVorOrt: checkins.map((ci) => ({
+        datum: (ci.checkInAt || '').slice(0, 10),
+        dauerMinuten: ci.checkOutAt
+          ? Math.round((new Date(ci.checkOutAt) - new Date(ci.checkInAt)) / 60000)
+          : null,
+        laeuftNoch: !ci.checkOutAt,
+      })),
     };
   });
 
   return { results };
 }
 
-// Liest ein einzelnes kv-Dokument (die App speichert alles als {key, value: JSON-String})
+// ---------------------------------------------------------------------
+// AGGREGIERTE BERICHTE: Summen über das GESAMTE Team bzw. ALLE Kunden —
+// eigener Pfad, weil hier keine Namensfilterung stattfindet, sondern über
+// alle Datensätze aufsummiert wird.
+// ---------------------------------------------------------------------
+function looksLikeTeamAggregateQuery(message) {
+  const m = message.toLowerCase();
+  return /(gesamt|insgesamt|alle mitarbeiter|ganze team|team.*überstunden|überstunden.*team)/.test(m) &&
+    /(überstunden|stunden)/.test(m);
+}
+function looksLikeVisitsAggregateQuery(message) {
+  const m = message.toLowerCase();
+  return /(wie viele besuche|anzahl.*besuche|besuche.*(monat|insgesamt|gemacht))/.test(m);
+}
+
+async function getTeamOvertimeAggregate() {
+  let employees;
+  try {
+    employees = await fetchKvDoc('employees');
+  } catch (e) {
+    return { error: e.message };
+  }
+  if (!employees || !employees.length) return null;
+
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  let requestKeys = [];
+  try {
+    requestKeys = await listKvKeysWithPrefix('request:');
+  } catch (e) {
+    /* ohne Anträge weitermachen */
+  }
+  const allRequests = [];
+  for (const k of requestKeys) {
+    const r = await fetchKvDoc(k);
+    if (r) allRequests.push(r);
+  }
+  const approvedThisMonth = allRequests.filter(
+    (r) => r.type === 'ueberstunden' && r.status === 'approved' && r.datum && r.datum.startsWith(ym)
+  );
+  const totalMinutes = approvedThisMonth.reduce((sum, r) => sum + timeRangeMinutes(r.startZeit, r.endZeit), 0);
+  return {
+    monat: ym,
+    gesamtGenehmigteUeberstundenTeamStunden: (totalMinutes / 60).toFixed(1),
+    anzahlMitarbeiterMitUeberstunden: new Set(approvedThisMonth.map((r) => r.employeeId)).size,
+  };
+}
+
+async function getVisitsAggregate() {
+  let visits;
+  try {
+    visits = await fetchCrmDoc('weck_visits_v1');
+  } catch (e) {
+    return { error: e.message };
+  }
+  if (!visits) return null;
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  const thisMonth = visits.filter((v) => (v.date || '').startsWith(ym));
+  const byChannel = {};
+  thisMonth.forEach((v) => {
+    byChannel[v.channel || 'Unbekannt'] = (byChannel[v.channel || 'Unbekannt'] || 0) + 1;
+  });
+  return { monat: ym, gesamtKontakteDiesenMonat: thisMonth.length, nachKanal: byChannel };
+}
+
+// ---------------------------------------------------------------------
+// Weitere CRM-Bereiche: Erinnerungen, Termine, Kurse, Neue Kontakte (Leads).
+// Eine gemeinsame Funktion, die je nach erkannter Absicht die passenden
+// Daten aus "app_data" holt (immer live, da sich das laufend ändert).
+// ---------------------------------------------------------------------
+async function getCrmOperationalDataForMessage(message) {
+  const m = message.toLowerCase();
+  const wantsReminders = /(erinnerung|reklamation|rückruf|überfällig|offene aufgabe)/.test(m);
+  const wantsAppointments = /(termin|kalender.*(heute|woche)|wann.*besuch)/.test(m);
+  const wantsCourses = /(kurs|schulung|fortbildung|interessent)/.test(m);
+  const wantsLeads = /(neue kontakte|lead|akquise|interessent(en)? praxis|noch kein kunde)/.test(m);
+
+  if (!wantsReminders && !wantsAppointments && !wantsCourses && !wantsLeads) return null;
+
+  const out = {};
+  try {
+    if (wantsReminders || wantsAppointments) {
+      const [clients, reminders, appointments] = await Promise.all([
+        fetchCrmDoc('weck_clients_v1'),
+        wantsReminders ? fetchCrmDoc('weck_reminders_v1') : Promise.resolve(null),
+        wantsAppointments ? fetchCrmDoc('weck_appointments_v1') : Promise.resolve(null),
+      ]);
+      const clientName = (id) => (clients || []).find((c) => c.id === id)?.name || 'Unbekannter Kunde';
+      const todayIso = todayIsoDate();
+
+      if (wantsReminders && reminders) {
+        out.offeneErinnerungen = reminders
+          .filter((r) => !r.done)
+          .sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || ''))
+          .slice(0, 15)
+          .map((r) => ({
+            praxis: clientName(r.clientId),
+            typ: r.type,
+            faellig: r.dueDate,
+            ueberfaellig: r.dueDate < todayIso,
+            notiz: r.notes || '',
+          }));
+      }
+      if (wantsAppointments && appointments) {
+        out.anstehendeTermine = appointments
+          .filter((a) => a.status === 'geplant')
+          .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+          .slice(0, 15)
+          .map((a) => ({
+            praxis: clientName(a.clientId),
+            datum: a.date,
+            uhrzeit: a.time || '',
+            thema: a.topic || '',
+          }));
+      }
+    }
+
+    if (wantsCourses) {
+      const courses = await fetchCrmDoc('weck_courses_v1');
+      if (courses) {
+        out.kurse = courses.map((c) => ({
+          titel: c.title,
+          vorbildung: c.vorbildung || '',
+          info: c.kurzinfo || '',
+          anzahlInteressenten: (c.interested || []).length,
+          interessenten: (c.interested || []).map((p) => p.name).filter(Boolean),
+        }));
+      }
+    }
+
+    if (wantsLeads) {
+      const leads = await fetchCrmDoc('weck_leads_v1');
+      if (leads) {
+        out.neueKontakte = leads
+          .filter((l) => l.status !== 'konvertiert')
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 15)
+          .map((l) => ({
+            praxis: l.practiceName,
+            zahnarzt: l.dentistName || '',
+            ansprechpartner: l.contactPerson || '',
+            telefon: l.phone || '',
+            email: l.email || '',
+            notiz: l.notes || '',
+            status: l.status,
+          }));
+      }
+    }
+  } catch (e) {
+    return { error: e.message };
+  }
+
+  return Object.keys(out).length ? out : null;
+}
 async function fetchKvDoc(key) {
   const token = await getZeitIdToken();
   const url = `https://firestore.googleapis.com/v1/projects/${ZEIT_FIREBASE.projectId}/databases/(default)/documents/kv/${encodeURIComponent(key)}`;
@@ -618,6 +895,56 @@ function todayIsoDate() {
   return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
 }
 
+// Geburtstage von Ärzten und Praxismitarbeiterinnen (aus dem CRM, Format MM-DD).
+// Statische Liste, aber die Berechnung "wer hat bald Geburtstag" wird HIER im
+// Code gemacht (nicht vom Sprachmodell), damit das Datum garantiert stimmt.
+const KNOWN_BIRTHDAYS = [
+  { name: 'Prof. Dr. S. Krifka', kontext: 'Prof. Dr. S. Krifka & Dr. A. Brackmann-Krifka', md: '01-09' },
+  { name: 'Dr. A. Brackmann-Krifka', kontext: 'Prof. Dr. S. Krifka & Dr. A. Brackmann-Krifka', md: '08-31' },
+  { name: 'Zahnarztpraxis Josette Hentsch', kontext: 'Zahnarztpraxis Josette Hentsch', md: '09-13' },
+  { name: 'M.Sc. Implantologie Zahnärztin Lisa Jahr', kontext: 'eigene Praxis', md: '11-22' },
+  { name: 'Dr. Michael Jung', kontext: 'Dr. Michael Jung', md: '03-15' },
+  { name: 'Frau Becker', kontext: 'Praxisteam Dr. Michael Jung', md: '03-06' },
+  { name: 'Frau Parelli-Lache', kontext: 'Praxisteam Dr. Michael Jung', md: '03-07' },
+  { name: 'Frau Lepen', kontext: 'Praxisteam Dr. Michael Jung', md: '04-28' },
+  { name: 'Frau Schwarz', kontext: 'Praxisteam Dr. Michael Jung', md: '05-06' },
+  { name: 'Frau Klingebiel', kontext: 'Praxisteam Dr. Michael Jung', md: '05-31' },
+  { name: 'Ulrike Olefeld', kontext: 'Praxisteam Dr. Michael Jung', md: '06-16' },
+  { name: 'Frau Calpacidou', kontext: 'Praxisteam Dr. Michael Jung', md: '08-26' },
+  { name: 'Frau Grundmann', kontext: 'Praxisteam Dr. Michael Jung', md: '11-25' },
+  { name: 'Tonja Kuntke', kontext: 'Praxisteam Dr. Michael Jung', md: '12-29' },
+  { name: 'Dr. Sven-Anneus Ohling', kontext: 'Gemeinschaftspraxis Ohling/Koch-Ohling', md: '04-26' },
+  { name: 'Zahnarztpraxis Carsten Schütte', kontext: 'Zahnarztpraxis Carsten Schütte', md: '02-07' },
+  { name: 'Ulrich Stapelfeldt', kontext: 'Ulrich Stapelfeldt', md: '05-19' },
+  { name: 'Lutterbach', kontext: 'Praxisteam Ulrich Stapelfeldt', md: '05-24' },
+  { name: 'Zahnarztpraxis Dr. Diana Tasche', kontext: 'Zahnarztpraxis Dr. Diana Tasche', md: '02-14' },
+  { name: 'Nancy Wrzosek', kontext: 'Praxisteam Dr. Diana Tasche', md: '04-15' },
+  { name: 'Stephanie Schmand', kontext: 'Praxisteam Dr. Diana Tasche', md: '12-29' },
+  { name: 'Dr. Dagmar Volk', kontext: 'eigene Praxis', md: '04-29' },
+  { name: 'Darko Savic', kontext: 'Zahnwerk Frästechnik GmbH', md: '01-15' },
+  { name: 'Firas Kassar', kontext: 'Zahnwerk Frästechnik GmbH', md: '01-24' },
+  { name: 'Juri Kan', kontext: 'Zahnwerk Frästechnik GmbH', md: '03-07' },
+  { name: 'Tobias Welzel', kontext: 'Zahnwerk Frästechnik GmbH', md: '10-26' },
+  { name: 'Claus Deimel', kontext: 'Zahnwerk Frästechnik GmbH', md: '12-03' },
+];
+
+function getUpcomingBirthdays(daysAhead) {
+  const now = new Date();
+  const results = [];
+  for (const b of KNOWN_BIRTHDAYS) {
+    const [mm, dd] = b.md.split('-').map(Number);
+    let next = new Date(now.getFullYear(), mm - 1, dd);
+    if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+      next = new Date(now.getFullYear() + 1, mm - 1, dd);
+    }
+    const diffDays = Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+    if (diffDays <= daysAhead) {
+      results.push({ name: b.name, kontext: b.kontext, datum: b.md, inTagen: diffDays });
+    }
+  }
+  return results.sort((a, b) => a.inTagen - b.inTagen);
+}
+
 function isDateWithinRange(dateStr, von, bis) {
   return dateStr >= von && dateStr <= bis;
 }
@@ -718,6 +1045,32 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Keine Nachricht erhalten' }) };
   }
 
+  // Sicherheitscheck: Passwort-/Zugangsdaten-Fragen werden NIE an das
+  // Sprachmodell weitergegeben — direkte, feste Antwort, unabhängig davon,
+  // wer fragt (diese Function hat kein Login, jeder mit der URL könnte
+  // sonst fragen).
+  if (/\b(passwort|password|zugangsdaten|login[- ]?daten|credentials?)\b/i.test(userMessage)) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        reply:
+          'Aus Sicherheitsgründen kann ich keine Zugangsdaten oder Passwörter herausgeben — das gilt für jede Anfrage, unabhängig davon, wer fragt. Bitte wende dich direkt an das Team unter 02173 – 85 23 40 oder info@weckdental.de.',
+      }),
+    };
+  }
+
+  // Kleiner Spaß-Easter-Egg — feste Antwort, damit sie immer genau gleich
+  // und zuverlässig kommt, unabhängig von der Laune des Sprachmodells.
+  if (/\bmazza\b/i.test(userMessage)) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        reply:
+          'Alejandro "Ale" Mazza ist der beste Mitarbeiter von Weck Dental Technik — kreativ, engagiert, und kommt noch dazu aus dem besten Land der Welt. 🇦🇷🏆',
+      }),
+    };
+  }
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return {
@@ -786,6 +1139,66 @@ exports.handler = async (event) => {
     }
   } catch (e) {
     liveDataBlock += `\n\nLIVE_DATEN_CRM: Live-Abfrage des CRM ist fehlgeschlagen (${e.message}).`;
+  }
+
+  // Erinnerungen, Termine, Kurse, Neue Kontakte — je nach erkannter Absicht.
+  try {
+    const crmOps = await getCrmOperationalDataForMessage(userMessage);
+    if (crmOps && crmOps.error) {
+      liveDataBlock += `\n\nLIVE_DATEN_CRM_BETRIEB: Live-Abfrage ist fehlgeschlagen (${crmOps.error}).`;
+    } else if (crmOps) {
+      liveDataBlock += '\n\nLIVE_DATEN_CRM_BETRIEB (gerade eben aus dem CRM abgerufen — Erinnerungen/Termine/Kurse/Neue Kontakte):\n' +
+        JSON.stringify(crmOps);
+    }
+  } catch (e) {
+    liveDataBlock += `\n\nLIVE_DATEN_CRM_BETRIEB: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+  }
+
+  // Team-Zugänge zum CRM (wer hat einen Account, welche Rolle)
+  try {
+    const crmUsers = await getCrmUsersForMessage(userMessage);
+    if (crmUsers && crmUsers.error) {
+      liveDataBlock += `\n\nLIVE_DATEN_CRM_BENUTZER: Live-Abfrage ist fehlgeschlagen (${crmUsers.error}).`;
+    } else if (crmUsers) {
+      liveDataBlock += '\n\nLIVE_DATEN_CRM_BENUTZER (gerade eben abgerufen):\n' + JSON.stringify(crmUsers);
+    }
+  } catch (e) {
+    liveDataBlock += `\n\nLIVE_DATEN_CRM_BENUTZER: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+  }
+
+  // Aggregierte Berichte: Team-Überstunden insgesamt, Besuche insgesamt
+  if (looksLikeTeamAggregateQuery(userMessage)) {
+    try {
+      const agg = await getTeamOvertimeAggregate();
+      if (agg && agg.error) {
+        liveDataBlock += `\n\nLIVE_DATEN_TEAM_UEBERSTUNDEN: Live-Abfrage ist fehlgeschlagen (${agg.error}).`;
+      } else if (agg) {
+        liveDataBlock += '\n\nLIVE_DATEN_TEAM_UEBERSTUNDEN (Summe über das gesamte Team, gerade eben berechnet):\n' + JSON.stringify(agg);
+      }
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_TEAM_UEBERSTUNDEN: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
+  }
+  if (looksLikeVisitsAggregateQuery(userMessage)) {
+    try {
+      const aggV = await getVisitsAggregate();
+      if (aggV && aggV.error) {
+        liveDataBlock += `\n\nLIVE_DATEN_BESUCHE_GESAMT: Live-Abfrage ist fehlgeschlagen (${aggV.error}).`;
+      } else if (aggV) {
+        liveDataBlock += '\n\nLIVE_DATEN_BESUCHE_GESAMT (Summe über alle Kunden, gerade eben berechnet):\n' + JSON.stringify(aggV);
+      }
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_BESUCHE_GESAMT: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
+  }
+
+  // Anstehende Geburtstage — immer mitgeben (günstig, keine Netzwerkabfrage
+  // nötig, ist statisch berechnet), damit Fragen wie "wer hat bald
+  // Geburtstag" ohne Namenserkennung funktionieren.
+  const upcomingBdays = getUpcomingBirthdays(21);
+  if (upcomingBdays.length) {
+    liveDataBlock += '\n\nANSTEHENDE_GEBURTSTAGE (nächste 21 Tage, heute ist ' + todayIsoDate() + '):\n' +
+      JSON.stringify(upcomingBdays);
   }
 
   // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
