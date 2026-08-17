@@ -605,15 +605,17 @@ async function getClientCrmInfoForMessage(message) {
   ordersAll = ordersAll || [];
   checkinsAll = checkinsAll || [];
 
+  const now = new Date();
   const results = matched.slice(0, 2).map((c) => {
     const visits = visitsAll
       .filter((v) => v.clientId === c.id)
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 6);
-    const orders = ordersAll
-      .filter((o) => o.clientId === c.id)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 6);
+    const allOrdersForClient = ordersAll.filter((o) => o.clientId === c.id);
+    const orders = allOrdersForClient.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+    const umsatzDiesesJahr = allOrdersForClient
+      .filter((o) => new Date(o.date).getFullYear() === now.getFullYear())
+      .reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
     const checkins = checkinsAll
       .filter((ci) => ci.clientId === c.id)
       .sort((a, b) => new Date(b.checkInAt) - new Date(a.checkInAt))
@@ -621,17 +623,26 @@ async function getClientCrmInfoForMessage(message) {
     return {
       name: c.name,
       notizen: c.notes || '',
+      vipKunde: !!c.vip,
+      beziehungsstatus: c.relationship || '',
+      fachgebiete: c.specialties || [],
+      kundeSeit: c.clientSince || '',
+      praxisjubilaeum: c.practiceAnniversary || '',
+      umsatzDiesesJahr: umsatzDiesesJahr.toFixed(2) + ' €',
       geburtstage: [
         ...(c.doctors || []).filter((d) => d.birthday).map((d) => {
-          const p = parseCrmBirthday(d.birthday);
-          return p
-            ? { name: d.name, geburtsdatum: p.day + '.' + p.month + '.' + p.year, aktuellesAlter: new Date().getFullYear() - p.year - (new Date().getMonth() + 1 < p.month || (new Date().getMonth() + 1 === p.month && new Date().getDate() < p.day) ? 1 : 0) }
-            : { name: d.name, geburtsdatum: d.birthday };
+          const p = parseCrmBirthday(d.birthday, d.birthYear);
+          if (!p) return { name: d.name, geburtsdatum: d.birthday };
+          const entry = { name: d.name, geburtsdatum: p.day + '.' + p.month + '.' + (p.year || '') };
+          if (p.year) {
+            entry.aktuellesAlter = now.getFullYear() - p.year - (now.getMonth() + 1 < p.month || (now.getMonth() + 1 === p.month && now.getDate() < p.day) ? 1 : 0);
+          }
+          return entry;
         }),
         ...(c.assistants || []).filter((a) => a.birthday).map((a) => {
-          const p = parseCrmBirthday(a.birthday);
+          const p = parseCrmBirthday(a.birthday, a.birthYear);
           return p
-            ? { name: a.name, geburtsdatum: p.day + '.' + p.month + '.' + p.year }
+            ? { name: a.name, geburtsdatum: p.day + '.' + p.month + '.' + (p.year || '') }
             : { name: a.name, geburtsdatum: a.birthday };
         }),
       ],
@@ -1144,16 +1155,17 @@ function todayIsoDate() {
 
 // Geburtstage von Ärzten und Praxismitarbeiterinnen — werden LIVE aus dem
 // CRM gelesen (weck_clients_v1, Felder doctors[].birthday und
-// assistants[].birthday). Das Feld enthält das VOLLE Geburtsdatum (von
-// einem HTML-Datumsfeld, intern immer im Format JJJJ-MM-TT gespeichert,
-// z. B. "1958-07-10" für den 10. Juli 1958 — unabhängig davon, wie es im
-// CRM-Formular angezeigt wird). Daraus lassen sich sowohl der nächste
-// Geburtstag als auch das aktuelle/künftige Alter berechnen.
-function parseCrmBirthday(birthday) {
+// assistants[].birthday). WICHTIG (bestätigt anhand des aktuellen
+// CRM-Quellcodes): das Feld "birthday" speichert NUR Monat-Tag (Format
+// "MM-TT", z. B. "07-10" für den 10. Juli) — das Jahr steht SEPARAT im
+// Feld "birthYear" (leer, wenn unbekannt; "1904" ist ein interner
+// Platzhalter für "Jahr unbekannt" und zählt nicht).
+function parseCrmBirthday(birthday, birthYear) {
   if (!birthday) return null;
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthday); // JJJJ-MM-TT (ggf. mit Zeitanteil)
+  const m = /^(\d{2})-(\d{2})$/.exec(birthday); // MM-TT
   if (!m) return null;
-  return { year: parseInt(m[1], 10), month: parseInt(m[2], 10), day: parseInt(m[3], 10) };
+  const year = birthYear && birthYear !== '1904' ? parseInt(birthYear, 10) : null;
+  return { month: parseInt(m[1], 10), day: parseInt(m[2], 10), year };
 }
 
 async function getUpcomingBirthdaysLive(daysAhead) {
@@ -1167,8 +1179,8 @@ async function getUpcomingBirthdaysLive(daysAhead) {
 
   const now = new Date();
   const results = [];
-  const collect = (name, kontext, birthday) => {
-    const parsed = parseCrmBirthday(birthday);
+  const collect = (name, kontext, birthday, birthYear) => {
+    const parsed = parseCrmBirthday(birthday, birthYear);
     if (!parsed) return;
     let next = new Date(now.getFullYear(), parsed.month - 1, parsed.day);
     if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
@@ -1176,13 +1188,14 @@ async function getUpcomingBirthdaysLive(daysAhead) {
     }
     const diffDays = Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
     if (diffDays <= daysAhead) {
-      const wirdJahre = next.getFullYear() - parsed.year;
-      results.push({ name, kontext, datum: parsed.day + '.' + parsed.month + '.', wirdJahreAlt: wirdJahre, inTagen: diffDays });
+      const entry = { name, kontext, datum: parsed.day + '.' + parsed.month + '.', inTagen: diffDays };
+      if (parsed.year) entry.wirdJahreAlt = next.getFullYear() - parsed.year;
+      results.push(entry);
     }
   };
   for (const c of clients) {
-    for (const d of c.doctors || []) collect(d.name, c.name, d.birthday);
-    for (const a of c.assistants || []) collect(a.name, 'Praxisteam ' + c.name, a.birthday);
+    for (const d of c.doctors || []) collect(d.name, c.name, d.birthday, d.birthYear);
+    for (const a of c.assistants || []) collect(a.name, 'Praxisteam ' + c.name, a.birthday, a.birthYear);
   }
   return results.sort((a, b) => a.inTagen - b.inTagen);
 }
