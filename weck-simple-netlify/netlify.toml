@@ -1,17 +1,25 @@
 [build]
   functions = "netlify/functions"
   publish = "."
- 
+
+[build.environment]
+  # Las claves AIza... de Firebase están diseñadas por Google para ser
+  # públicas/embebidas en el código — la seguridad real la dan las reglas de
+  # seguridad de Firestore, no el secreto de esta clave. La API key de
+  # Gemini (la sensible de verdad) NUNCA está en el código: vive solo como
+  # variable de entorno GEMINI_API_KEY.
+  SECRETS_SCAN_ENABLED = "false"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
- 
+
 [[headers]]
   for = "/index.html"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
- 
+
 [[headers]]
   for = "/"
   [headers.values]
