@@ -390,6 +390,14 @@ LIVE_DATEN_BESUCHE_GESAMT zeigen Summen über das GESAMTE Team bzw. ALLE
 Kunden (nicht nur eine Person). Ein ANSTEHENDE_GEBURTSTAGE-Abschnitt (falls
 vorhanden) listet Geburtstage in den nächsten 21 Tagen — die Tage bis zum
 Geburtstag ("inTagen") sind bereits fertig berechnet, rechne sie nicht neu.
+Ein LIVE_DATEN_WETTER-Abschnitt (falls vorhanden) zeigt das aktuelle Wetter
+in Langenfeld, live von Open-Meteo abgerufen — nutze ausschließlich diese
+Zahlen bei Wetterfragen, erfinde niemals eigene Wetterwerte. Ein
+LIVE_DATEN_UEBERSICHT-Abschnitt (falls vorhanden) zeigt bei allgemeinen
+Fragen wie "was steht heute an" oder "gib mir eine Übersicht" eine
+Kurzzusammenfassung über alle Bereiche des CRM (offene Erinnerungen,
+anstehende Termine, offene Leads, Kursangebote) — nur Zahlen, keine
+Einzeldetails; verweise bei Bedarf auf gezieltere Fragen für Details.
 Bei "letztePersoenlicheBesucheVorOrt" im LIVE_DATEN_CRM-Abschnitt handelt es
 sich um tatsächliche Vor-Ort-Besuche mit Ein-/Auscheck-Zeit (Tagesroute),
 getrennt von den übrigen Kontaktkanälen.
@@ -613,6 +621,10 @@ async function getClientCrmInfoForMessage(message) {
     return {
       name: c.name,
       notizen: c.notes || '',
+      geburtstage: [
+        ...(c.doctors || []).filter((d) => d.birthday).map((d) => ({ name: d.name, datum: d.birthday })),
+        ...(c.assistants || []).filter((a) => a.birthday).map((a) => ({ name: a.name, datum: a.birthday })),
+      ],
       letzteKontakte: visits.map((v) => ({
         datum: v.date,
         kanal: v.channel,
@@ -794,6 +806,49 @@ async function getCrmOperationalDataForMessage(message) {
 
   return Object.keys(out).length ? out : null;
 }
+
+// ---------------------------------------------------------------------
+// ALLGEMEINE ÜBERSICHT ("was steht heute an", "gib mir einen Überblick") —
+// im Unterschied zu den anderen CRM-Funktionen filtert diese nicht nach
+// Absicht/Namen, sondern liefert IMMER eine Kurzzusammenfassung über alle
+// Bereiche gleichzeitig (nur Zählungen, keine Details, um die Antwort kurz
+// zu halten).
+// ---------------------------------------------------------------------
+function looksLikeGeneralOverviewQuery(message) {
+  return /(übersicht|überblick|zusammenfassung|was steht (heute |diese woche )?an|was (ist|gibt es).*(los|neu|pendent)|was liegt an|status.*crm)/i.test(message);
+}
+
+async function getCrmGeneralOverview() {
+  try {
+    const [reminders, appointments, leads, courses, clients] = await Promise.all([
+      fetchCrmDoc('weck_reminders_v1'),
+      fetchCrmDoc('weck_appointments_v1'),
+      fetchCrmDoc('weck_leads_v1'),
+      fetchCrmDoc('weck_courses_v1'),
+      fetchCrmDoc('weck_clients_v1'),
+    ]);
+    const todayIso = todayIsoDate();
+    const openReminders = (reminders || []).filter((r) => !r.done);
+    const overdueReminders = openReminders.filter((r) => r.dueDate && r.dueDate < todayIso);
+    const upcomingAppointments = (appointments || []).filter((a) => a.status === 'geplant');
+    const openLeads = (leads || []).filter((l) => l.status !== 'konvertiert');
+    const totalInterested = (courses || []).reduce((sum, c) => sum + (c.interested || []).length, 0);
+
+    return {
+      datumHeute: todayIso,
+      anzahlKunden: (clients || []).length,
+      offeneErinnerungenGesamt: openReminders.length,
+      davonUeberfaellig: overdueReminders.length,
+      anstehendeTermineGesamt: upcomingAppointments.length,
+      offeneLeadsGesamt: openLeads.length,
+      kursangeboteGesamt: (courses || []).length,
+      interessentenGesamtUeberAlleKurse: totalInterested,
+    };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
 async function fetchKvDoc(key) {
   const token = await getZeitIdToken();
   const url = `https://firestore.googleapis.com/v1/projects/${ZEIT_FIREBASE.projectId}/databases/(default)/documents/kv/${encodeURIComponent(key)}`;
@@ -1027,57 +1082,87 @@ async function fetchFahrplanDoc(key) {
   return fetchKvDoc('fahrplan_' + key);
 }
 
+// ---------------------------------------------------------------------
+// WETTER IN LANGENFELD — über Open-Meteo (kostenlos, kein API-Key nötig).
+// AccuWeather selbst bietet keine einfache kostenlose Schnittstelle dafür
+// an (die Webseite ist für Browser gemacht, nicht zum Auslesen per Code)
+// — Open-Meteo liefert dieselben echten, aktuellen Wetterdaten für
+// Langenfeld, nur von einer anderen, dafür offenen Quelle.
+// ---------------------------------------------------------------------
+const LANGENFELD_LAT = 51.1096;
+const LANGENFELD_LON = 6.9469;
+
+const WMO_CODES_DE = {
+  0: 'klarer Himmel', 1: 'überwiegend klar', 2: 'teilweise bewölkt', 3: 'bedeckt',
+  45: 'Nebel', 48: 'gefrierender Nebel',
+  51: 'leichter Nieselregen', 53: 'mäßiger Nieselregen', 55: 'starker Nieselregen',
+  61: 'leichter Regen', 63: 'mäßiger Regen', 65: 'starker Regen',
+  66: 'gefrierender Regen (leicht)', 67: 'gefrierender Regen (stark)',
+  71: 'leichter Schneefall', 73: 'mäßiger Schneefall', 75: 'starker Schneefall',
+  77: 'Schneekörner',
+  80: 'leichte Regenschauer', 81: 'mäßige Regenschauer', 82: 'heftige Regenschauer',
+  85: 'leichte Schneeschauer', 86: 'starke Schneeschauer',
+  95: 'Gewitter', 96: 'Gewitter mit leichtem Hagel', 99: 'Gewitter mit starkem Hagel',
+};
+
+function looksLikeWeatherQuery(message) {
+  return /(wetter|temperatur|regnet|schneit|sonnig|grad.*(heute|drau(ss|ß)en)|wie.*wird.*(heute|morgen))/i.test(message);
+}
+
+async function getLangenfeldWeather() {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LANGENFELD_LAT}&longitude=${LANGENFELD_LON}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FBerlin`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Wetterdienst nicht erreichbar (Status ' + res.status + ')');
+  const data = await res.json();
+  const c = data.current;
+  return {
+    ort: 'Langenfeld (Rheinland)',
+    aktuelleTemperatur: c.temperature_2m + ' °C',
+    wetterlage: WMO_CODES_DE[c.weather_code] || 'unbekannt',
+    luftfeuchtigkeit: c.relative_humidity_2m + ' %',
+    windGeschwindigkeit: c.wind_speed_10m + ' km/h',
+    heuteMax: data.daily.temperature_2m_max[0] + ' °C',
+    heuteMin: data.daily.temperature_2m_min[0] + ' °C',
+    quelle: 'Open-Meteo (Live-Daten)',
+  };
+}
+
 function todayIsoDate() {
   const now = new Date();
   return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
 }
 
-// Geburtstage von Ärzten und Praxismitarbeiterinnen (aus dem CRM, Format MM-DD).
-// Statische Liste, aber die Berechnung "wer hat bald Geburtstag" wird HIER im
-// Code gemacht (nicht vom Sprachmodell), damit das Datum garantiert stimmt.
-const KNOWN_BIRTHDAYS = [
-  { name: 'Prof. Dr. S. Krifka', kontext: 'Prof. Dr. S. Krifka & Dr. A. Brackmann-Krifka', md: '01-09' },
-  { name: 'Dr. A. Brackmann-Krifka', kontext: 'Prof. Dr. S. Krifka & Dr. A. Brackmann-Krifka', md: '08-31' },
-  { name: 'Zahnarztpraxis Josette Hentsch', kontext: 'Zahnarztpraxis Josette Hentsch', md: '09-13' },
-  { name: 'M.Sc. Implantologie Zahnärztin Lisa Jahr', kontext: 'eigene Praxis', md: '11-22' },
-  { name: 'Dr. Michael Jung', kontext: 'Dr. Michael Jung', md: '03-15' },
-  { name: 'Frau Becker', kontext: 'Praxisteam Dr. Michael Jung', md: '03-06' },
-  { name: 'Frau Parelli-Lache', kontext: 'Praxisteam Dr. Michael Jung', md: '03-07' },
-  { name: 'Frau Lepen', kontext: 'Praxisteam Dr. Michael Jung', md: '04-28' },
-  { name: 'Frau Schwarz', kontext: 'Praxisteam Dr. Michael Jung', md: '05-06' },
-  { name: 'Frau Klingebiel', kontext: 'Praxisteam Dr. Michael Jung', md: '05-31' },
-  { name: 'Ulrike Olefeld', kontext: 'Praxisteam Dr. Michael Jung', md: '06-16' },
-  { name: 'Frau Calpacidou', kontext: 'Praxisteam Dr. Michael Jung', md: '08-26' },
-  { name: 'Frau Grundmann', kontext: 'Praxisteam Dr. Michael Jung', md: '11-25' },
-  { name: 'Tonja Kuntke', kontext: 'Praxisteam Dr. Michael Jung', md: '12-29' },
-  { name: 'Dr. Sven-Anneus Ohling', kontext: 'Gemeinschaftspraxis Ohling/Koch-Ohling', md: '04-26' },
-  { name: 'Zahnarztpraxis Carsten Schütte', kontext: 'Zahnarztpraxis Carsten Schütte', md: '02-07' },
-  { name: 'Ulrich Stapelfeldt', kontext: 'Ulrich Stapelfeldt', md: '05-19' },
-  { name: 'Lutterbach', kontext: 'Praxisteam Ulrich Stapelfeldt', md: '05-24' },
-  { name: 'Zahnarztpraxis Dr. Diana Tasche', kontext: 'Zahnarztpraxis Dr. Diana Tasche', md: '02-14' },
-  { name: 'Nancy Wrzosek', kontext: 'Praxisteam Dr. Diana Tasche', md: '04-15' },
-  { name: 'Stephanie Schmand', kontext: 'Praxisteam Dr. Diana Tasche', md: '12-29' },
-  { name: 'Dr. Dagmar Volk', kontext: 'eigene Praxis', md: '04-29' },
-  { name: 'Darko Savic', kontext: 'Zahnwerk Frästechnik GmbH', md: '01-15' },
-  { name: 'Firas Kassar', kontext: 'Zahnwerk Frästechnik GmbH', md: '01-24' },
-  { name: 'Juri Kan', kontext: 'Zahnwerk Frästechnik GmbH', md: '03-07' },
-  { name: 'Tobias Welzel', kontext: 'Zahnwerk Frästechnik GmbH', md: '10-26' },
-  { name: 'Claus Deimel', kontext: 'Zahnwerk Frästechnik GmbH', md: '12-03' },
-];
+// Geburtstage von Ärzten und Praxismitarbeiterinnen — werden jetzt LIVE aus
+// dem CRM gelesen (weck_clients_v1, Felder doctors[].birthday und
+// assistants[].birthday, Format MM-DD), statt aus einer festen Liste. So
+// sind auch nachträglich im CRM eingetragene/korrigierte Geburtstage sofort
+// sichtbar, ohne dass der Code hier geändert werden muss.
+async function getUpcomingBirthdaysLive(daysAhead) {
+  let clients;
+  try {
+    clients = await fetchCrmDoc('weck_clients_v1');
+  } catch (e) {
+    return { error: e.message };
+  }
+  if (!clients) return [];
 
-function getUpcomingBirthdays(daysAhead) {
   const now = new Date();
   const results = [];
-  for (const b of KNOWN_BIRTHDAYS) {
-    const [mm, dd] = b.md.split('-').map(Number);
+  const collect = (name, kontext, birthday) => {
+    if (!birthday || !/^\d{2}-\d{2}$/.test(birthday)) return;
+    const [mm, dd] = birthday.split('-').map(Number);
     let next = new Date(now.getFullYear(), mm - 1, dd);
     if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
       next = new Date(now.getFullYear() + 1, mm - 1, dd);
     }
     const diffDays = Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
     if (diffDays <= daysAhead) {
-      results.push({ name: b.name, kontext: b.kontext, datum: b.md, inTagen: diffDays });
+      results.push({ name, kontext, datum: birthday, inTagen: diffDays });
     }
+  };
+  for (const c of clients) {
+    for (const d of c.doctors || []) collect(d.name, c.name, d.birthday);
+    for (const a of c.assistants || []) collect(a.name, 'Praxisteam ' + c.name, a.birthday);
   }
   return results.sort((a, b) => a.inTagen - b.inTagen);
 }
@@ -1329,13 +1414,44 @@ exports.handler = async (event) => {
     }
   }
 
-  // Anstehende Geburtstage — immer mitgeben (günstig, keine Netzwerkabfrage
-  // nötig, ist statisch berechnet), damit Fragen wie "wer hat bald
-  // Geburtstag" ohne Namenserkennung funktionieren.
-  const upcomingBdays = getUpcomingBirthdays(21);
-  if (upcomingBdays.length) {
-    liveDataBlock += '\n\nANSTEHENDE_GEBURTSTAGE (nächste 21 Tage, heute ist ' + todayIsoDate() + '):\n' +
-      JSON.stringify(upcomingBdays);
+  // Anstehende Geburtstage — jetzt live aus dem CRM (nicht mehr statisch),
+  // damit Fragen wie "wer hat bald Geburtstag" oder "wann hat X Geburtstag"
+  // immer den aktuellen Stand zeigen.
+  try {
+    const upcomingBdays = await getUpcomingBirthdaysLive(21);
+    if (upcomingBdays && upcomingBdays.error) {
+      liveDataBlock += `\n\nANSTEHENDE_GEBURTSTAGE: Live-Abfrage ist fehlgeschlagen (${upcomingBdays.error}).`;
+    } else if (upcomingBdays && upcomingBdays.length) {
+      liveDataBlock += '\n\nANSTEHENDE_GEBURTSTAGE (nächste 21 Tage, live aus dem CRM, heute ist ' + todayIsoDate() + '):\n' +
+        JSON.stringify(upcomingBdays);
+    }
+  } catch (e) {
+    liveDataBlock += `\n\nANSTEHENDE_GEBURTSTAGE: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+  }
+
+  // Wetter in Langenfeld — live von Open-Meteo
+  if (looksLikeWeatherQuery(userMessage)) {
+    try {
+      const weather = await getLangenfeldWeather();
+      liveDataBlock += '\n\nLIVE_DATEN_WETTER (gerade eben abgerufen):\n' + JSON.stringify(weather);
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_WETTER: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
+  }
+
+  // Allgemeine Übersicht ("was steht heute an") — Kurzzusammenfassung
+  // über ALLE CRM-Bereiche gleichzeitig.
+  if (looksLikeGeneralOverviewQuery(userMessage)) {
+    try {
+      const overview = await getCrmGeneralOverview();
+      if (overview && overview.error) {
+        liveDataBlock += `\n\nLIVE_DATEN_UEBERSICHT: Live-Abfrage ist fehlgeschlagen (${overview.error}).`;
+      } else if (overview) {
+        liveDataBlock += '\n\nLIVE_DATEN_UEBERSICHT (Kurzüberblick über alle CRM-Bereiche, gerade eben abgerufen):\n' + JSON.stringify(overview);
+      }
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_UEBERSICHT: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
   }
 
   // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
