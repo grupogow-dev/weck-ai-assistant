@@ -923,10 +923,22 @@ const OWLLAB_BASE_URL = 'https://dawn-pine.owllab-tab.de:5001';
 async function owllabFetch(path) {
   const apiKey = process.env.OWLLAB_API_KEY;
   if (!apiKey) throw new Error('OWLLAB_API_KEY ist nicht konfiguriert (Netlify Umgebungsvariablen prüfen)');
-  const res = await fetch(OWLLAB_BASE_URL + path, {
-    headers: { 'X-Api-Key': apiKey },
-  });
-  if (!res.ok) throw new Error('Owllab antwortete mit Status ' + res.status);
+  let res;
+  try {
+    res = await fetch(OWLLAB_BASE_URL + path, {
+      headers: { 'X-Api-Key': apiKey },
+    });
+  } catch (e) {
+    // Node/undici verstecken die eigentliche Ursache oft hinter dem generischen
+    // "fetch failed" — die echte Ursache (DNS, Timeout, TLS, ...) steckt in e.cause.
+    const cause = e.cause ? ` — Ursache: ${e.cause.code || e.cause.message || JSON.stringify(e.cause)}` : '';
+    throw new Error('Netzwerkfehler beim Verbindungsaufbau zu Owllab: ' + e.message + cause);
+  }
+  if (!res.ok) {
+    let bodyText = '';
+    try { bodyText = (await res.text()).slice(0, 200); } catch {}
+    throw new Error('Owllab antwortete mit Status ' + res.status + (bodyText ? ' — ' + bodyText : ''));
+  }
   return res.json();
 }
 
