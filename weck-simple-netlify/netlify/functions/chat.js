@@ -1487,6 +1487,21 @@ exports.handler = async (event) => {
     }
   }
 
+  // Diagnose-Modus: Nachricht exakt "debug live" (Groß-/Kleinschreibung
+  // egal) gibt die rohen LIVE_DATEN-Blöcke direkt zurück, OHNE über Gemini
+  // zu gehen — für schnelles Fehlersuchen ohne Umweg über die
+  // Entwicklertools des Browsers.
+  if (userMessage.trim().toLowerCase().startsWith('debug live')) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        reply: liveDataBlock.trim()
+          ? '--- ROHE LIVE-DATEN (Diagnose-Modus) ---\n' + liveDataBlock.trim()
+          : 'Kein LIVE_DATEN-Block wurde für diese Nachricht ausgelöst (keine erkannte Absicht). Versuche z. B. "debug live wetter" oder erwähne einen Kunden-/Mitarbeiternamen davor.',
+      }),
+    };
+  }
+
   // Google Gemini (kostenloser Tarif) über die OpenAI-kompatible Schnittstelle,
   // damit der Rest des Codes (messages/roles-Format) unverändert bleiben kann.
   const heutigesDatum = todayIsoDate();
