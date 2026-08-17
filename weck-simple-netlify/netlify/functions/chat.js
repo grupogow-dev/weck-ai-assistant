@@ -622,8 +622,18 @@ async function getClientCrmInfoForMessage(message) {
       name: c.name,
       notizen: c.notes || '',
       geburtstage: [
-        ...(c.doctors || []).filter((d) => d.birthday).map((d) => ({ name: d.name, datum: d.birthday })),
-        ...(c.assistants || []).filter((a) => a.birthday).map((a) => ({ name: a.name, datum: a.birthday })),
+        ...(c.doctors || []).filter((d) => d.birthday).map((d) => {
+          const p = parseCrmBirthday(d.birthday);
+          return p
+            ? { name: d.name, geburtsdatum: p.day + '.' + p.month + '.' + p.year, aktuellesAlter: new Date().getFullYear() - p.year - (new Date().getMonth() + 1 < p.month || (new Date().getMonth() + 1 === p.month && new Date().getDate() < p.day) ? 1 : 0) }
+            : { name: d.name, geburtsdatum: d.birthday };
+        }),
+        ...(c.assistants || []).filter((a) => a.birthday).map((a) => {
+          const p = parseCrmBirthday(a.birthday);
+          return p
+            ? { name: a.name, geburtsdatum: p.day + '.' + p.month + '.' + p.year }
+            : { name: a.name, geburtsdatum: a.birthday };
+        }),
       ],
       letzteKontakte: visits.map((v) => ({
         datum: v.date,
@@ -1132,11 +1142,20 @@ function todayIsoDate() {
   return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
 }
 
-// Geburtstage von Ärzten und Praxismitarbeiterinnen — werden jetzt LIVE aus
-// dem CRM gelesen (weck_clients_v1, Felder doctors[].birthday und
-// assistants[].birthday, Format MM-DD), statt aus einer festen Liste. So
-// sind auch nachträglich im CRM eingetragene/korrigierte Geburtstage sofort
-// sichtbar, ohne dass der Code hier geändert werden muss.
+// Geburtstage von Ärzten und Praxismitarbeiterinnen — werden LIVE aus dem
+// CRM gelesen (weck_clients_v1, Felder doctors[].birthday und
+// assistants[].birthday). Das Feld enthält das VOLLE Geburtsdatum (von
+// einem HTML-Datumsfeld, intern immer im Format JJJJ-MM-TT gespeichert,
+// z. B. "1958-07-10" für den 10. Juli 1958 — unabhängig davon, wie es im
+// CRM-Formular angezeigt wird). Daraus lassen sich sowohl der nächste
+// Geburtstag als auch das aktuelle/künftige Alter berechnen.
+function parseCrmBirthday(birthday) {
+  if (!birthday) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthday); // JJJJ-MM-TT (ggf. mit Zeitanteil)
+  if (!m) return null;
+  return { year: parseInt(m[1], 10), month: parseInt(m[2], 10), day: parseInt(m[3], 10) };
+}
+
 async function getUpcomingBirthdaysLive(daysAhead) {
   let clients;
   try {
@@ -1149,15 +1168,16 @@ async function getUpcomingBirthdaysLive(daysAhead) {
   const now = new Date();
   const results = [];
   const collect = (name, kontext, birthday) => {
-    if (!birthday || !/^\d{2}-\d{2}$/.test(birthday)) return;
-    const [mm, dd] = birthday.split('-').map(Number);
-    let next = new Date(now.getFullYear(), mm - 1, dd);
+    const parsed = parseCrmBirthday(birthday);
+    if (!parsed) return;
+    let next = new Date(now.getFullYear(), parsed.month - 1, parsed.day);
     if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-      next = new Date(now.getFullYear() + 1, mm - 1, dd);
+      next = new Date(now.getFullYear() + 1, parsed.month - 1, parsed.day);
     }
     const diffDays = Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
     if (diffDays <= daysAhead) {
-      results.push({ name, kontext, datum: birthday, inTagen: diffDays });
+      const wirdJahre = next.getFullYear() - parsed.year;
+      results.push({ name, kontext, datum: parsed.day + '.' + parsed.month + '.', wirdJahreAlt: wirdJahre, inTagen: diffDays });
     }
   };
   for (const c of clients) {
