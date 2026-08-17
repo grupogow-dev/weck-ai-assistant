@@ -137,6 +137,25 @@ bald Geburtstag" nutze IMMER den ANSTEHENDE_GEBURTSTAGE-Abschnitt weiter
 unten (falls vorhanden) — dort sind die Tage bis zum Geburtstag bereits
 korrekt vorgerechnet.
 
+GEBURTSTAGE DES WECK-DENTAL-TEAMS (nur Namen und Geburtsdatum — bewusst
+OHNE Adressen oder private Telefonnummern, da dies eine öffentlich
+erreichbare Seite ist): Ursula Albien 14.10.1975 · Michael Blume 6.5.1973 ·
+Cristian D'Arienzo 23.5.1993 · Sigrid Dulski 11.12.1966 · Anaïs Fink
+18.03.2003 · Tim Gottschall 23.11.2000 · Miriam Großmann 21.10.2004 ·
+Patricia Härtel 10.09.1981 · Monika Hoffmann 17.09.1972 · Julia Knecht
+16.6.1983 · Emre Mazgal 10.12.1991 · Alejandro José Mazza 20.1.1990 · Sylvia
+Möders 29.1.1971 · Sandra Mokros 6.8.1979 · Heike Mörstedt 17.06.1972 ·
+Sefa-Ali Temiz 6.4.1999 · Mario Tschirch 12.9.1976 · Gunnar Warm 18.10.1973
+· Clara Weidmann 24.07.1973 · Bärbel Wingert 15.10.1963 · Sabine Weck
+5.6.1977 · Rainer Felix 28.12.1952 · Andreas Franke 12.12.1963 · Jörg
+Penzek 20.12.1960 · Markus Roggenbuck 30.03.1967 · Horst Terschmitten
+07.11.1961 · Carlo Weigand 30.11.1954 · Ulrich Wolter 08.07.1956 · Anja
+Schacht-Dinberu 26.8.1965.
+Für "wer hat bald Geburtstag" nutze den ANSTEHENDE_GEBURTSTAGE-Abschnitt
+weiter unten (dort bereits korrekt vorgerechnet). Für einen konkreten
+Namen aus dieser Liste kannst du auch direkt aus dem Geburtsdatum hier
+antworten.
+
 LIEFERANT – ZAHNWERK FRÄSTECHNIK GMBH (Preisliste 2026, gültig ab 1. Februar
 2026): Dentales Fertigungszentrum für Fräsarbeiten und 3D-Druck, am selben
 Standort wie Weck Dental (Hausinger Str. 3b, 40764 Langenfeld). Gegründet
@@ -1184,6 +1203,42 @@ function parseCrmBirthday(birthday, birthYear) {
   return { month: parseInt(m[1], 10), day: parseInt(m[2], 10), year };
 }
 
+// Statische Liste — Weck-Dental-Team (Name + Geburtsdatum, keine Adressen
+// oder private Telefonnummern). Anders als die CRM-Kundendaten kommt das
+// hier nicht live aus einer Datenbank (dafür gibt es keine passende Quelle),
+// daher fest im Code — bei Änderungen im Team hier von Hand aktualisieren.
+const TEAM_BIRTHDAYS = [
+  { name: 'Ursula Albien', month: 10, day: 14, year: 1975 },
+  { name: 'Michael Blume', month: 5, day: 6, year: 1973 },
+  { name: "Cristian D'Arienzo", month: 5, day: 23, year: 1993 },
+  { name: 'Sigrid Dulski', month: 12, day: 11, year: 1966 },
+  { name: 'Anaïs Fink', month: 3, day: 18, year: 2003 },
+  { name: 'Tim Gottschall', month: 11, day: 23, year: 2000 },
+  { name: 'Miriam Großmann', month: 10, day: 21, year: 2004 },
+  { name: 'Patricia Härtel', month: 9, day: 10, year: 1981 },
+  { name: 'Monika Hoffmann', month: 9, day: 17, year: 1972 },
+  { name: 'Julia Knecht', month: 6, day: 16, year: 1983 },
+  { name: 'Emre Mazgal', month: 12, day: 10, year: 1991 },
+  { name: 'Alejandro José Mazza', month: 1, day: 20, year: 1990 },
+  { name: 'Sylvia Möders', month: 1, day: 29, year: 1971 },
+  { name: 'Sandra Mokros', month: 8, day: 6, year: 1979 },
+  { name: 'Heike Mörstedt', month: 6, day: 17, year: 1972 },
+  { name: 'Sefa-Ali Temiz', month: 4, day: 6, year: 1999 },
+  { name: 'Mario Tschirch', month: 9, day: 12, year: 1976 },
+  { name: 'Gunnar Warm', month: 10, day: 18, year: 1973 },
+  { name: 'Clara Weidmann', month: 7, day: 24, year: 1973 },
+  { name: 'Bärbel Wingert', month: 10, day: 15, year: 1963 },
+  { name: 'Sabine Weck', month: 6, day: 5, year: 1977 },
+  { name: 'Rainer Felix', month: 12, day: 28, year: 1952 },
+  { name: 'Andreas Franke', month: 12, day: 12, year: 1963 },
+  { name: 'Jörg Penzek', month: 12, day: 20, year: 1960 },
+  { name: 'Markus Roggenbuck', month: 3, day: 30, year: 1967 },
+  { name: 'Horst Terschmitten', month: 11, day: 7, year: 1961 },
+  { name: 'Carlo Weigand', month: 11, day: 30, year: 1954 },
+  { name: 'Ulrich Wolter', month: 7, day: 8, year: 1956 },
+  { name: 'Anja Schacht-Dinberu', month: 8, day: 26, year: 1965 },
+];
+
 async function getUpcomingBirthdaysLive(daysAhead) {
   let clients;
   try {
@@ -1191,28 +1246,38 @@ async function getUpcomingBirthdaysLive(daysAhead) {
   } catch (e) {
     return { error: e.message };
   }
-  if (!clients) return [];
 
   const now = new Date();
   const results = [];
-  const collect = (name, kontext, birthday, birthYear) => {
-    const parsed = parseCrmBirthday(birthday, birthYear);
-    if (!parsed) return;
-    let next = new Date(now.getFullYear(), parsed.month - 1, parsed.day);
+  const collect = (name, kontext, month, day, year) => {
+    let next = new Date(now.getFullYear(), month - 1, day);
     if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-      next = new Date(now.getFullYear() + 1, parsed.month - 1, parsed.day);
+      next = new Date(now.getFullYear() + 1, month - 1, day);
     }
     const diffDays = Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
     if (diffDays <= daysAhead) {
-      const entry = { name, kontext, datum: parsed.day + '.' + parsed.month + '.', inTagen: diffDays };
-      if (parsed.year) entry.wirdJahreAlt = next.getFullYear() - parsed.year;
+      const entry = { name, kontext, datum: day + '.' + month + '.', inTagen: diffDays };
+      if (year) entry.wirdJahreAlt = next.getFullYear() - year;
       results.push(entry);
     }
   };
-  for (const c of clients) {
-    for (const d of c.doctors || []) collect(d.name, c.name, d.birthday, d.birthYear);
-    for (const a of c.assistants || []) collect(a.name, 'Praxisteam ' + c.name, a.birthday, a.birthYear);
+
+  if (clients) {
+    for (const c of clients) {
+      for (const d of c.doctors || []) {
+        const p = parseCrmBirthday(d.birthday, d.birthYear);
+        if (p) collect(d.name, c.name, p.month, p.day, p.year);
+      }
+      for (const a of c.assistants || []) {
+        const p = parseCrmBirthday(a.birthday, a.birthYear);
+        if (p) collect(a.name, 'Praxisteam ' + c.name, p.month, p.day, p.year);
+      }
+    }
   }
+  for (const t of TEAM_BIRTHDAYS) {
+    collect(t.name, 'Weck Dental Team', t.month, t.day, t.year);
+  }
+
   return results.sort((a, b) => a.inTagen - b.inTagen);
 }
 
@@ -1332,7 +1397,12 @@ exports.handler = async (event) => {
 
   // Kleiner Spaß-Easter-Egg — feste Antwort, damit sie immer genau gleich
   // und zuverlässig kommt, unabhängig von der Laune des Sprachmodells.
-  if (/\bmazza\b/i.test(userMessage)) {
+  // WICHTIG: nur bei reinen Identitätsfragen ("wer ist Mazza") auslösen —
+  // bei allem anderen (Alter, Geburtstag, Debug-Modus, ...) durchlassen,
+  // damit echte Fragen zu ihm nicht vom Scherz verschluckt werden.
+  const isDebugMode = userMessage.trim().toLowerCase().startsWith('debug live');
+  const asksSomethingElseAboutMazza = /(geburtstag|geburtsdatum|alt\b|jahre|wann|cumple|edad|años|stunden|urlaub|krank|kontakt|telefon|adresse)/i.test(userMessage);
+  if (/\bmazza\b/i.test(userMessage) && !isDebugMode && !asksSomethingElseAboutMazza) {
     return {
       statusCode: 200,
       body: JSON.stringify({
