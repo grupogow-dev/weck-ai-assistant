@@ -412,6 +412,10 @@ Geburtstag ("inTagen") sind bereits fertig berechnet, rechne sie nicht neu.
 Ein LIVE_DATEN_WETTER-Abschnitt (falls vorhanden) zeigt das aktuelle Wetter
 in Langenfeld, live von Open-Meteo abgerufen — nutze ausschließlich diese
 Zahlen bei Wetterfragen, erfinde niemals eigene Wetterwerte. Ein
+LIVE_DATEN_OWLLAB_AUFTRAG-Abschnitt (falls vorhanden) zeigt den aktuellen
+Status eines Auftrags aus der externen Laborverwaltung Owllab (Frage nach
+einer Auftragsnummer). Ein LIVE_DATEN_OWLLAB_KUNDEN-Abschnitt zeigt die
+aktiven Owllab-Kunden. Ein
 LIVE_DATEN_UEBERSICHT-Abschnitt (falls vorhanden) zeigt bei allgemeinen
 Fragen wie "was steht heute an" oder "gib mir eine Übersicht" eine
 Kurzzusammenfassung über alle Bereiche des CRM (offene Erinnerungen,
@@ -900,6 +904,63 @@ async function getCrmGeneralOverview() {
       kursangeboteGesamt: (courses || []).length,
       interessentenGesamtUeberAlleKurse: totalInterested,
     };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+// ---------------------------------------------------------------------
+// OWLLAB — externe Labor-/Auftragsverwaltung (kein selbst gebautes System,
+// echte kommerzielle Software mit eigener REST-API). Erreichbar über einen
+// Cloudflare-Tunnel; Zugang per API-Key im Header "X-Api-Key". Der Key
+// kommt NUR aus einer Umgebungsvariable (OWLLAB_API_KEY in Netlify),
+// niemals im Code. Nur LESENDE Endpunkte werden genutzt — das Anlegen
+// neuer Aufträge (POST /api/v1/auftraege) macht dieser Chat bewusst NICHT,
+// da das eine schreibende Aktion mit echten Konsequenzen wäre.
+// ---------------------------------------------------------------------
+const OWLLAB_BASE_URL = 'https://dawn-pine.owllab-tab.de:5001';
+
+async function owllabFetch(path) {
+  const apiKey = process.env.OWLLAB_API_KEY;
+  if (!apiKey) throw new Error('OWLLAB_API_KEY ist nicht konfiguriert (Netlify Umgebungsvariablen prüfen)');
+  const res = await fetch(OWLLAB_BASE_URL + path, {
+    headers: { 'X-Api-Key': apiKey },
+  });
+  if (!res.ok) throw new Error('Owllab antwortete mit Status ' + res.status);
+  return res.json();
+}
+
+function extractAuftragsnummer(message) {
+  const m = /(?:auftrag(?:s?nummer)?|pedido|bestellung)\D{0,12}(\d{3,})/i.exec(message);
+  if (m) return m[1];
+  const bare = /\b\d{4,}\b/.exec(message); // z.B. "wie ist der Stand von 20481?"
+  return bare ? bare[0] : null;
+}
+
+function looksLikeOwllabOrderQuery(message) {
+  const m = message.toLowerCase();
+  return /(auftrag|pedido|bestellung)/.test(m) && /(status|stand|wo ist|fertig|läuft)/.test(m);
+}
+
+async function getOwllabOrderStatus(message) {
+  if (!looksLikeOwllabOrderQuery(message)) return null;
+  const nr = extractAuftragsnummer(message);
+  if (!nr) return null;
+  try {
+    const data = await owllabFetch(`/api/v1/auftraege/${nr}/status`);
+    return { auftragsnummer: nr, ...data };
+  } catch (e) {
+    return { error: e.message, auftragsnummer: nr };
+  }
+}
+
+function looksLikeOwllabCustomersQuery(message) {
+  return /owllab/i.test(message) && /(kunden|aktiv)/i.test(message);
+}
+
+async function getOwllabActiveCustomers() {
+  try {
+    return await owllabFetch('/api/v1/kunden');
   } catch (e) {
     return { error: e.message };
   }
@@ -1570,6 +1631,30 @@ exports.handler = async (event) => {
       }
     } catch (e) {
       liveDataBlock += `\n\nLIVE_DATEN_UEBERSICHT: Live-Abfrage ist fehlgeschlagen (${e.message}).`;
+    }
+  }
+
+  // Owllab (externe Auftragsverwaltung) — Auftragsstatus und/oder aktive Kunden
+  try {
+    const owllabOrder = await getOwllabOrderStatus(userMessage);
+    if (owllabOrder && owllabOrder.error) {
+      liveDataBlock += `\n\nLIVE_DATEN_OWLLAB_AUFTRAG: Live-Abfrage bei Owllab ist fehlgeschlagen (${owllabOrder.error}).`;
+    } else if (owllabOrder) {
+      liveDataBlock += '\n\nLIVE_DATEN_OWLLAB_AUFTRAG (gerade eben von Owllab abgerufen):\n' + JSON.stringify(owllabOrder);
+    }
+  } catch (e) {
+    liveDataBlock += `\n\nLIVE_DATEN_OWLLAB_AUFTRAG: Live-Abfrage bei Owllab ist fehlgeschlagen (${e.message}).`;
+  }
+  if (looksLikeOwllabCustomersQuery(userMessage)) {
+    try {
+      const owllabCustomers = await getOwllabActiveCustomers();
+      if (owllabCustomers && owllabCustomers.error) {
+        liveDataBlock += `\n\nLIVE_DATEN_OWLLAB_KUNDEN: Live-Abfrage bei Owllab ist fehlgeschlagen (${owllabCustomers.error}).`;
+      } else {
+        liveDataBlock += '\n\nLIVE_DATEN_OWLLAB_KUNDEN (gerade eben von Owllab abgerufen):\n' + JSON.stringify(owllabCustomers);
+      }
+    } catch (e) {
+      liveDataBlock += `\n\nLIVE_DATEN_OWLLAB_KUNDEN: Live-Abfrage bei Owllab ist fehlgeschlagen (${e.message}).`;
     }
   }
 
