@@ -485,6 +485,12 @@ function firestoreFieldsToJs(fields) {
 // Kundenwünsche pro Kunde. Anderes Firebase-Projekt als Zeiterfassung/
 // Fahrplan, daher eigene Anmeldung und eigene Collection ("app_data" statt
 // "kv", Schlüssel wie im CRM selbst: weck_clients_v1, weck_visits_v1, ...).
+//
+// WICHTIG: Das CRM verlangt seit Kurzem eine ECHTE Anmeldung (E-Mail +
+// Passwort) statt der früheren anonymen Anmeldung. Dafür gibt es einen
+// eigenen, eingeschränkten "Chat-Account" (nur Lesezugriff, falls im CRM
+// so einstellbar) — Zugangsdaten kommen NUR aus Umgebungsvariablen
+// (CRM_BOT_EMAIL, CRM_BOT_PASSWORD in Netlify), niemals im Code selbst.
 // ---------------------------------------------------------------------
 const CRM_FIREBASE = {
   apiKey: 'AIzaSyCBNSKE3E74YClG-20I_7MG9Vh4JMiYsjs',
@@ -496,16 +502,26 @@ let cachedCrmIdTokenExpiry = 0;
 
 async function getCrmIdToken() {
   if (cachedCrmIdToken && Date.now() < cachedCrmIdTokenExpiry) return cachedCrmIdToken;
+
+  const email = process.env.CRM_BOT_EMAIL;
+  const password = process.env.CRM_BOT_PASSWORD;
+  if (!email || !password) {
+    throw new Error('CRM_BOT_EMAIL/CRM_BOT_PASSWORD sind nicht konfiguriert (Netlify Umgebungsvariablen prüfen)');
+  }
+
   const res = await fetch(
-    `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${CRM_FIREBASE.apiKey}`,
+    `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${CRM_FIREBASE.apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ returnSecureToken: true }),
+      body: JSON.stringify({ email, password, returnSecureToken: true }),
     }
   );
   const data = await res.json();
-  if (!data.idToken) throw new Error('Anonyme CRM-Anmeldung fehlgeschlagen');
+  if (!data.idToken) {
+    const reason = data.error?.message || 'unbekannter Fehler';
+    throw new Error('CRM-Anmeldung fehlgeschlagen (' + reason + ')');
+  }
   cachedCrmIdToken = data.idToken;
   cachedCrmIdTokenExpiry = Date.now() + 50 * 60 * 1000;
   return cachedCrmIdToken;
